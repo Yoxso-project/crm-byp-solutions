@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Talent Bench - ByP Solutions</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -19,9 +19,15 @@
                         accent: '#6EB5A0',
                         ink: { DEFAULT: '#3D4451', muted: '#8E95A9', light: '#B4BAC8' },
                         cream: '#FAF9F7',
+                        surface: 'rgba(255,255,255,0.72)',
                         pastel: { lavender: '#EEEBFA', mint: '#E2F4ED', blush: '#FDEDF1', sky: '#E8F2FA', peach: '#FEF4EE', lilac: '#7B6FD4', sage: '#6EB5A0', rose: '#D4899A', azure: '#7BA7D4' }
                     },
-                    boxShadow: { 'soft': '0 4px 24px -4px rgba(123, 111, 212, 0.12)', 'soft-lg': '0 12px 40px -8px rgba(61, 68, 81, 0.1)', 'card': '0 8px 32px -6px rgba(61, 68, 81, 0.08)' }
+                    boxShadow: { 
+                        'soft': '0 4px 24px -4px rgba(123, 111, 212, 0.12)', 
+                        'soft-lg': '0 12px 40px -8px rgba(61, 68, 81, 0.1)', 
+                        'glow': '0 0 40px -10px rgba(123, 111, 212, 0.35)',
+                        'card': '0 8px 32px -6px rgba(61, 68, 81, 0.08)' 
+                    }
                 }
             }
         }
@@ -36,54 +42,41 @@
         .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
         .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 1.25rem; }
         .flip-card-back { transform: rotateY(180deg); background: rgba(255, 255, 255, 0.95); }
+        .orb { position: absolute; border-radius: 50%; filter: blur(60px); pointer-events: none; opacity: 0.55; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(20px, -20px); } }
     </style>
 </head>
 <body class="bg-cream text-ink antialiased">
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
-        const supabase = window.supabase ? window.supabase.createClient('https://pvnenwnfrjhvydnvdlaq.supabase.co', 'sb_publishable_a_g7LglaqhY2hb2K1zz8Ug_ahZ_Lx_c') : null;
-
-        // Mapeo visual para los tipos de asistente
-        const TYPE_BADGE = {
-            'General Virtual Assistant': 'bg-pastel-mint text-pastel-sage',
-            'Video Editors': 'bg-pastel-blush text-pastel-rose',
-            'Specialized Assistant': 'bg-pastel-lavender text-pastel-lilac',
-            'AI-Augmented Specialist': 'bg-pastel-sky text-pastel-azure',
-            'Elite Technical / Developer': 'bg-orange-100 text-orange-600'
-        };
+        const { useState, useEffect, useRef } = React;
+        const SUPABASE_URL = 'https://pvnenwnfrjhvydnvdlaq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_a_g7LglaqhY2hb2K1zz8Ug_ahZ_Lx_c';
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         function TalentCard({ talent, onRequestInterview }) {
             const [isFlipped, setIsFlipped] = useState(false);
-            const type = talent.assistant_type || 'General Virtual Assistant';
-
             return (
                 <div className={`flip-card h-[480px] w-full ${isFlipped ? 'flipped' : ''}`} onClick={() => setIsFlipped(!isFlipped)}>
                     <div className="flip-card-inner shadow-card">
-                        {/* Frente */}
                         <div className="flip-card-front bg-white p-6 flex flex-col items-center text-center">
                             <div className="w-24 h-24 rounded-full bg-pastel-lavender mb-4 flex items-center justify-center font-bold text-2xl text-pastel-lilac">
-                                {talent.full_name.charAt(0)}
+                                {talent.full_name?.charAt(0)}
                             </div>
                             <h3 className="text-lg font-semibold">{talent.full_name}</h3>
-                            <p className="text-pastel-lilac text-sm mb-2">{talent.role_type}</p>
-                            
-                            {/* Insignia de tipo de asistente */}
-                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase mb-4 ${TYPE_BADGE[type] || 'bg-gray-100'}`}>
-                                {type}
-                            </span>
-                            
+                            <p className="text-pastel-lilac text-sm mb-4">{talent.role_type}</p>
                             <p className="text-ink-muted text-sm line-clamp-3 mb-6">{talent.summary}</p>
                             <button onClick={(e) => { e.stopPropagation(); onRequestInterview(talent); }} className="w-full py-3 bg-pastel-lilac text-white rounded-xl font-medium">
                                 Schedule Interview
                             </button>
                         </div>
-                        {/* Reverso */}
-                        <div className="flip-card-back p-6 border border-pastel-lavender">
-                            <h4 className="font-semibold mb-2">Detailed Profile</h4>
-                            <p className="text-sm text-ink-muted">{talent.summary}</p>
-                            <button className="mt-4 text-xs underline text-pastel-lilac">Click to flip back</button>
+                        <div className="flip-card-back p-6 border border-pastel-lavender flex flex-col justify-between">
+                            <div>
+                                <h4 className="font-semibold mb-2">Detailed Profile</h4>
+                                <p className="text-sm text-ink-muted">{talent.summary}</p>
+                            </div>
+                            <button className="text-xs underline text-pastel-lilac">Flip back</button>
                         </div>
                     </div>
                 </div>
@@ -94,6 +87,7 @@
             const [talents, setTalents] = useState([]);
             
             useEffect(() => {
+                if (!supabase) return;
                 async function fetchTalents() {
                     const { data } = await supabase.from('public_talent_bench').select('*');
                     setTalents(data || []);
@@ -101,24 +95,14 @@
                 fetchTalents();
             }, []);
 
-            const handleSchedule = async (e) => {
-                e.preventDefault();
-                const formData = new FormData(e.target);
-                
-                // LOGICA PARA GUARDAR EN SUPABASE:
-                // const { error } = await supabase.from('interviews').insert({
-                //     name: formData.get('name'),
-                //     email: formData.get('email'),
-                //     talent_id: selectedTalent.id
-                // });
-                
-                alert("Request sent successfully!");
-            };
-
             return (
-                <div className="p-8 max-w-6xl mx-auto">
+                <div className="min-h-screen p-8 max-w-6xl mx-auto">
+                    <header className="mb-12 text-center">
+                        <h1 className="text-4xl font-bold gradient-text mb-4">Premium Talent Bench</h1>
+                        <p className="text-ink-muted">Find your next specialist.</p>
+                    </header>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {talents.map(t => <TalentCard key={t.id} talent={t} onRequestInterview={() => console.log(t)} />)}
+                        {talents.map(t => <TalentCard key={t.id} talent={t} onRequestInterview={(t) => alert(`Requesting ${t.full_name}`)} />)}
                     </div>
                 </div>
             );
