@@ -1,96 +1,198 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Premium Talent Bench - ByP Solutions</title>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         brand: {
-                            500: '#4263eb',
-                            600: '#4263eb',
-                            800: '#1e3a8a',
+                            400: '#9B8FE8',
+                            500: '#7B6FD4',
+                            600: '#7B6FD4',
+                            800: '#5B52A8',
                         },
-                        accent: '#20c997',
-                        slate: {
-                            deep: '#0f172a',
-                            clean: '#f8fafc',
+                        accent: '#6EB5A0',
+                        ink: {
+                            DEFAULT: '#3D4451',
+                            muted: '#8E95A9',
+                            light: '#B4BAC8',
+                        },
+                        cream: '#FAF9F7',
+                        surface: 'rgba(255,255,255,0.72)',
+                        pastel: {
+                            lavender: '#EEEBFA',
+                            mint: '#E2F4ED',
+                            blush: '#FDEDF1',
+                            sky: '#E8F2FA',
+                            peach: '#FEF4EE',
+                            lilac: '#7B6FD4',
+                            sage: '#6EB5A0',
+                            rose: '#D4899A',
+                            azure: '#7BA7D4',
                         }
                     },
                     letterSpacing: {
-                        widest: '0.12em',
+                        widest: '0.14em',
+                        luxury: '0.06em',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 24px -4px rgba(123, 111, 212, 0.12)',
+                        'soft-lg': '0 12px 40px -8px rgba(61, 68, 81, 0.1)',
+                        'glow': '0 0 40px -10px rgba(123, 111, 212, 0.35)',
+                        'card': '0 8px 32px -6px rgba(61, 68, 81, 0.08)',
+                    },
+                    animation: {
+                        'float': 'float 8s ease-in-out infinite',
+                        'float-delayed': 'float 8s ease-in-out 3s infinite',
+                        'pulse-soft': 'pulseSoft 2.5s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s linear infinite',
+                        'fade-up': 'fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+                        'scale-in': 'scaleIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards',
+                        'slide-down': 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                     }
                 }
             }
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background-color: #FAF9F7;
+            color: #3D4451;
+            overflow-x: hidden;
         }
-        .flip-card {
-            perspective: 1000px;
-        }
+        
+        /* Flip Card Styles */
+        .flip-card { perspective: 1200px; }
         .flip-card-inner {
             position: relative;
             width: 100%;
             height: 100%;
-            transition: transform 0.6s ease-in-out;
+            transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
             transform-style: preserve-3d;
         }
-        .flip-card.flipped .flip-card-inner {
-            transform: rotateY(180deg);
-        }
-        .flip-card-front,
-        .flip-card-back {
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back {
             position: absolute;
             width: 100%;
             height: 100%;
             -webkit-backface-visibility: hidden;
             backface-visibility: hidden;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
         }
         .flip-card-front {
-            background-color: #f8fafc;
+            background: rgba(255, 255, 255, 0.78);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         .flip-card-back {
-            background-color: #f8fafc;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             transform: rotateY(180deg);
         }
+        
+        /* Custom UI Elements */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
         .gradient-badge {
-            background: linear-gradient(135deg, #4263eb 0%, #20c997 100%);
+            background: linear-gradient(135deg, #9B8FE8 0%, #6EB5A0 100%);
         }
-        .media-preview-enter {
-            animation: fadeIn 0.3s ease-in-out;
+        .gradient-text {
+            background: linear-gradient(135deg, #7B6FD4 0%, #6EB5A0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
+        .btn-premium {
+            background: linear-gradient(135deg, #7B6FD4 0%, #8B7FE0 50%, #6EB5A0 100%);
+            background-size: 200% 200%;
+            transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .btn-premium:hover:not(:disabled) {
+            background-position: 100% 0;
+            box-shadow: 0 12px 32px -8px rgba(123, 111, 212, 0.45);
+            transform: translateY(-1px);
+        }
+        
+        /* Animations */
+        .media-preview-enter { animation: scaleIn 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+        .quiz-step-enter { animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+        .card-hover { transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1); }
+        .card-hover:not(.is-locked):hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 48px -12px rgba(123, 111, 212, 0.18);
+        }
+        .pricing-sticky { position: sticky; top: 76px; z-index: 30; }
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            opacity: 0.55;
+        }
+        .fade-hidden { opacity: 0; transform: translateY(24px); }
+        .fade-visible { opacity: 1; transform: translateY(0); transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1); }
+        .status-dot { animation: pulseSoft 2.5s ease-in-out infinite; }
+        .modal-enter { animation: scaleIn 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+        .drawer-enter { animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; transform-origin: top; }
+        .shimmer-loader {
+            background: linear-gradient(90deg, #EEEBFA 25%, #FAF9F7 50%, #EEEBFA 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.8s linear infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(12px, -18px) scale(1.04); }
+            66% { transform: translate(-8px, 10px) scale(0.96); }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.94); }
             to { opacity: 1; transform: scale(1); }
         }
-        .quiz-collapse {
-            transition: all 0.5s ease-in-out;
-            overflow: hidden;
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px) scaleY(0.95); }
+            to { opacity: 1; transform: translateY(0) scaleY(1); }
         }
-        .locked-overlay {
-            backdrop-filter: blur(2px);
+        @keyframes pulseSoft {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.65; transform: scale(0.85); }
         }
-        .pricing-sticky {
-            position: sticky;
-            top: 88px;
-            z-index: 30;
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
+        input:focus, textarea:focus, button:focus-visible { outline: none; }
+        
+        /* Custom Scrollbar for flipped cards */
+        .flip-card-back::-webkit-scrollbar { width: 6px; }
+        .flip-card-back::-webkit-scrollbar-track { background: transparent; }
+        .flip-card-back::-webkit-scrollbar-thumb { background: rgba(123, 111, 212, 0.2); border-radius: 10px; }
+        .flip-card-back::-webkit-scrollbar-thumb:hover { background: rgba(123, 111, 212, 0.4); }
     </style>
 </head>
-<body class="bg-slate-clean">
+<body class="bg-cream text-ink antialiased">
     <div id="root"></div>
 
     <script type="text/babel">
@@ -99,7 +201,8 @@
         const SUPABASE_URL = 'https://pvnenwnfrjhvydnvdlaq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_a_g7LglaqhY2hb2K1zz8Ug_ahZ_Lx_c';
 
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Safe client initialization
+        const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
         const CATEGORIES = [
             { id: 'all', name: 'All Talent' },
@@ -111,36 +214,11 @@
         ];
 
         const PRICING_TIERS = [
-            {
-                id: 'general',
-                name: 'General Virtual Assistant',
-                rate: 4.50,
-                description: 'Inbox management, basic data entry, scheduling, customer support.',
-            },
-            {
-                id: 'video',
-                name: 'Video Editors',
-                rate: 5.00,
-                description: 'Short-form clipping, transitions, color grading, multi-platform formatting.',
-            },
-            {
-                id: 'specialized',
-                name: 'Specialized Assistant',
-                rate: 5.50,
-                description: 'CRM optimization, project coordination, advanced research workflows.',
-            },
-            {
-                id: 'ai',
-                name: 'AI-Augmented Specialist',
-                rate: 6.00,
-                description: 'Advanced multi-tool AI scraping, automated content repurposing, workflows via Make/Airtable.',
-            },
-            {
-                id: 'elite',
-                name: 'Elite Technical / Developer',
-                rate: 15.00,
-                description: 'GoHighLevel platform development, QuickBooks accounting, full-scale web development.',
-            },
+            { id: 'general', name: 'General Virtual Assistant', rate: 4.50, description: 'Inbox management, basic data entry, scheduling, customer support.' },
+            { id: 'video', name: 'Video Editors', rate: 5.00, description: 'Short-form clipping, transitions, color grading, multi-platform formatting.' },
+            { id: 'specialized', name: 'Specialized Assistant', rate: 5.50, description: 'CRM optimization, project coordination, advanced research workflows.' },
+            { id: 'ai', name: 'AI-Augmented Specialist', rate: 6.00, description: 'Advanced multi-tool AI scraping, automated content repurposing, workflows via Make/Airtable.' },
+            { id: 'elite', name: 'Elite Technical / Developer', rate: 15.00, description: 'GoHighLevel platform development, QuickBooks accounting, full-scale web development.' },
         ];
 
         const QUIZ_BOTTLENECKS = [
@@ -161,203 +239,186 @@
             { id: 'qb', label: 'QuickBooks', keywords: ['quickbooks', 'accounting'] },
             { id: 'pm', label: 'ClickUp/Notion', keywords: ['clickup', 'notion', 'project'] },
             { id: 'shopify', label: 'Shopify', keywords: ['shopify', 'ecommerce', 'e-commerce'] },
-            { id: 'ai', label: 'Active AI Tools (ChatGPT, Claude, Clay, Midjourney, etc.)', keywords: ['chatgpt', 'claude', 'clay', 'midjourney', 'ai'] },
-            { id: 'workspace', label: 'Standard Meta/Google Workspace', keywords: ['google', 'workspace', 'meta', 'facebook'] },
+            { id: 'ai', label: 'Active AI Tools', keywords: ['chatgpt', 'claude', 'clay', 'midjourney', 'ai'] },
+            { id: 'workspace', label: 'Meta/Google Workspace', keywords: ['google', 'workspace', 'meta', 'facebook'] },
         ];
 
-        const BOOKING_SLOTS = [
-            '9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'
-        ];
+        const BOOKING_SLOTS = ['9:00 AM', '10:00 AM', '11:00 AM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM'];
 
-        function formatRate(rate) {
-            return rate.toFixed(2);
+        const TIER_STYLES = {
+            general: { bg: 'bg-pastel-mint', border: 'border-pastel-sage/20', accent: 'text-pastel-sage' },
+            video: { bg: 'bg-pastel-blush', border: 'border-pastel-rose/20', accent: 'text-pastel-rose' },
+            specialized: { bg: 'bg-pastel-lavender', border: 'border-pastel-lilac/20', accent: 'text-pastel-lilac' },
+            ai: { bg: 'bg-pastel-sky', border: 'border-pastel-azure/20', accent: 'text-pastel-azure' },
+            elite: { bg: 'bg-pastel-peach', border: 'border-orange-300/30', accent: 'text-orange-400' },
+        };
+
+        function AmbientBackground() {
+            return (
+                <div className="fixed inset-0 overflow-hidden pointer-events-none z-0" aria-hidden="true">
+                    <div className="orb w-[300px] sm:w-[420px] h-[300px] sm:h-[420px] bg-pastel-lavender -top-20 -left-20 animate-float" />
+                    <div className="orb w-[250px] sm:w-[360px] h-[250px] sm:h-[360px] bg-pastel-mint top-1/3 -right-20 animate-float-delayed" />
+                    <div className="orb w-[200px] sm:w-[280px] h-[200px] sm:h-[280px] bg-pastel-blush bottom-20 left-1/4 animate-float" style={{ animationDelay: '1.5s' }} />
+                </div>
+            );
         }
 
-        function applyDiscount(rate, isFullTime) {
-            return isFullTime ? rate * 0.9 : rate;
+        function FadeIn({ children, delay = 0, className = '' }) {
+            const ref = useRef(null);
+            const [visible, setVisible] = useState(false);
+            useEffect(() => {
+                const el = ref.current;
+                if (!el) return;
+                const observer = new IntersectionObserver(
+                    ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
+                    { threshold: 0.08, rootMargin: '0px 0px -20px 0px' }
+                );
+                observer.observe(el);
+                return () => observer.disconnect();
+            }, []);
+            return (
+                <div ref={ref} className={`${visible ? 'fade-visible' : 'fade-hidden'} ${className}`} style={{ transitionDelay: `${delay}ms` }}>
+                    {children}
+                </div>
+            );
         }
 
+        function TrustStrip({ language }) {
+            const items = language === 'es'
+                ? ['100% Verificados', 'Bilingües EN/ES', 'Agencia Gestionada', 'Despliegue en 48h']
+                : ['Fully Vetted', 'Bilingual EN/ES', 'Agency-Managed', '48hr Deploy'];
+            return (
+                <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 px-2">
+                    {items.map((item, i) => (
+                        <div key={item} className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full glass-panel shadow-soft text-[10px] sm:text-xs font-medium text-ink-muted tracking-luxury uppercase" style={{ animationDelay: `${i * 100}ms` }}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-pastel-sage status-dot" />
+                            {item}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        function LeadHero({ language, onStartQuiz, quizCompleted, isQuizOpen }) {
+            const t = language === 'es' ? {
+                eyebrow: 'Sin compromiso · 60 segundos',
+                title: 'Encuentre su especialista ideal',
+                subtitle: '¿No sabe por dónde empezar? Le mostramos el equipo perfecto para su negocio sin dolores de cabeza técnicos.',
+                cta: 'Comenzar Match Inteligente',
+                skip: 'O explore los perfiles destacados abajo',
+            } : {
+                eyebrow: 'No commitment · 60 seconds',
+                title: 'Find your perfect specialist',
+                subtitle: 'Not sure where to start? We\'ll match you with the right team for your business — no technical expertise required.',
+                cta: 'Start Smart Match',
+                skip: 'Or browse featured profiles below',
+            };
+
+            if (quizCompleted) return null;
+
+            return (
+                <FadeIn className="text-center mb-8 px-4">
+                    <p className="text-[10px] sm:text-xs font-semibold text-pastel-lilac tracking-widest uppercase mb-3">{t.eyebrow}</p>
+                    <h2 className="text-3xl sm:text-4xl md:text-5xl font-semibold text-ink mb-4 tracking-tight leading-tight">
+                        {t.title.split(' ').slice(0, -2).join(' ')}<br className="hidden sm:block" />{' '}
+                        <span className="gradient-text">{t.title.split(' ').slice(-2).join(' ')}</span>
+                    </h2>
+                    <p className="text-ink-muted max-w-xl mx-auto text-sm sm:text-base leading-relaxed mb-8">
+                        {t.subtitle}
+                    </p>
+                    
+                    {!isQuizOpen && (
+                        <div className="animate-scale-in">
+                            <button onClick={onStartQuiz} className="btn-premium text-white w-full sm:w-auto px-8 py-4 rounded-full font-semibold text-sm tracking-luxury shadow-soft-lg flex items-center justify-center mx-auto gap-2">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                                {t.cta}
+                            </button>
+                            <p className="text-ink-light text-xs mt-5 tracking-wide">{t.skip}</p>
+                        </div>
+                    )}
+                </FadeIn>
+            );
+        }
+
+        function formatRate(rate) { return rate.toFixed(2); }
+        function applyDiscount(rate, isFullTime) { return isFullTime ? rate * 0.9 : rate; }
+        
         function talentMatchesTools(talent, selectedTools) {
             if (!selectedTools || selectedTools.length === 0) return true;
-            const haystack = [
-                talent.role_type,
-                talent.summary,
-                ...(Array.isArray(talent.tags) ? talent.tags : []),
-                ...(Array.isArray(talent.skills) ? talent.skills : []),
-            ].join(' ').toLowerCase();
-
+            const haystack = [talent.role_type, talent.summary, ...(Array.isArray(talent.tags) ? talent.tags : []), ...(Array.isArray(talent.skills) ? talent.skills : [])].join(' ').toLowerCase();
             return selectedTools.some(toolId => {
                 const tool = QUIZ_TOOLS.find(t => t.id === toolId);
-                if (!tool) return false;
-                return tool.keywords.some(kw => haystack.includes(kw));
+                return tool && tool.keywords.some(kw => haystack.includes(kw));
             });
         }
 
         function talentMatchesBottleneck(talent, bottleneckId) {
             if (!bottleneckId) return true;
             const bottleneck = QUIZ_BOTTLENECKS.find(b => b.id === bottleneckId);
-            if (!bottleneck) return true;
-            return bottleneck.categories.includes(talent.category_id);
+            return bottleneck ? bottleneck.categories.includes(talent.category_id) : true;
         }
 
         function isAvailableWithin48Hours(talent) {
             const tags = Array.isArray(talent.tags) ? talent.tags : [];
-            const tagMatch = tags.some(tag =>
-                String(tag).toLowerCase().includes('48') ||
-                String(tag).toLowerCase().includes('available') ||
-                String(tag).toLowerCase() === 'available_48h'
-            );
-            if (tagMatch) return true;
-            if (talent.available_within_48h === true) return true;
-            const status = String(talent.availability_status || '').toLowerCase();
-            return status.includes('48') || status === 'available';
+            const tagMatch = tags.some(tag => String(tag).toLowerCase().includes('48') || String(tag).toLowerCase() === 'available_48h');
+            if (tagMatch || talent.available_within_48h === true) return true;
+            return String(talent.availability_status || '').toLowerCase().includes('48');
         }
 
-        function PricingTierBanner({ isFullTime, onToggleCapacity, language }) {
-            const [showTooltip, setShowTooltip] = useState(false);
-
-            const t = language === 'es' ? {
-                title: 'Paquetes de Agencia Todo Incluido',
-                subtitle: 'Tarifas por hora del paquete gestionado — no freelancers aislados',
-                partTime: 'Medio Tiempo (Estándar)',
-                fullTime: 'Tiempo Completo (Ahorra 10%)',
-                retainer: 'Todos los paquetes operan con retainer prepagado por adelantado para asegurar su especialista dedicado.',
-                includes: 'Incluye: horas de agente dedicado, gestión de QA, monitoreo continuo y cobertura de respaldo instantánea.',
-                perHour: '/hr',
-                tooltip: 'La tarifa por hora cubre únicamente el tiempo de ejecución del especialista. Las suscripciones de software o claves API premium se manejan por separado. Los clientes pueden proporcionar sus propias credenciales o optar por un paquete de credenciales aislado provisto por la agencia, facturado por separado.',
-            } : {
-                title: 'All-Inclusive Agency Service Packages',
-                subtitle: 'Managed bundle hourly rates — not isolated, risky freelancers',
-                partTime: 'Part-Time (Standard)',
-                fullTime: 'Full-Time (Save 10%)',
-                retainer: 'All agency packages operate on a prepaid retainer model, billed upfront to lock in your dedicated specialist.',
-                includes: 'Includes: dedicated agent hours, quality assurance management, continuous monitoring, and instant backup coverage.',
-                perHour: '/hr',
-                tooltip: 'The hourly rate covers the specialist\'s execution time only. Software tool subscriptions or premium API keys are handled separately. Clients may either provide their own workspace credentials directly or opt for an isolated, agency-provisioned credential package billed separately.',
-            };
-
-            return (
-                <div className="pricing-sticky mb-8">
-                    <div className="bg-slate-deep rounded-2xl shadow-xl p-6 sm:p-8 border border-slate-700/50">
-                        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-6">
-                            <div>
-                                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 tracking-wide">{t.title}</h2>
-                                <p className="text-slate-300 text-sm tracking-wider uppercase">{t.subtitle}</p>
-                                <p className="text-slate-400 text-sm mt-3 leading-relaxed">{t.includes}</p>
-                            </div>
-                            <div className="flex-shrink-0">
-                                <div className="flex items-center bg-slate-800/80 rounded-xl p-1 border border-slate-600">
-                                    <button
-                                        onClick={() => onToggleCapacity(false)}
-                                        className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out tracking-wide ${
-                                            !isFullTime ? 'bg-brand-600 text-white shadow-lg' : 'text-slate-400 hover:text-white'
-                                        }`}
-                                    >
-                                        {t.partTime}
-                                    </button>
-                                    <button
-                                        onClick={() => onToggleCapacity(true)}
-                                        className={`px-4 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ease-in-out tracking-wide ${
-                                            isFullTime ? 'bg-accent text-white shadow-lg' : 'text-slate-400 hover:text-white'
-                                        }`}
-                                    >
-                                        {t.fullTime}
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                            {PRICING_TIERS.map(tier => {
-                                const displayRate = applyDiscount(tier.rate, isFullTime);
-                                return (
-                                    <div
-                                        key={tier.id}
-                                        className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/40 hover:border-brand-600/50 transition-all duration-300 ease-in-out hover:shadow-lg"
-                                    >
-                                        <div className="text-xs font-semibold text-accent uppercase tracking-widest mb-1">{tier.name}</div>
-                                        <div className="flex items-baseline gap-1 mb-2">
-                                            <span className="text-2xl font-bold text-white">${formatRate(displayRate)}</span>
-                                            <span className="text-slate-400 text-sm">{t.perHour}</span>
-                                        </div>
-                                        {isFullTime && (
-                                            <div className="text-xs text-emerald-400 line-through text-slate-500 mb-1">${formatRate(tier.rate)}{t.perHour}</div>
-                                        )}
-                                        <p className="text-xs text-slate-400 leading-relaxed">{tier.description}</p>
-                                    </div>
-                                );
-                            })}
-                        </div>
-
-                        <div className="mt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                            <p className="text-xs text-slate-400 tracking-wide">{t.retainer}</p>
-                            <div className="relative">
-                                <button
-                                    onMouseEnter={() => setShowTooltip(true)}
-                                    onMouseLeave={() => setShowTooltip(false)}
-                                    onClick={() => setShowTooltip(!showTooltip)}
-                                    className="text-xs text-brand-500 hover:text-accent underline decoration-dotted tracking-wide transition-all duration-300"
-                                >
-                                    {language === 'es' ? 'Nota sobre herramientas y API' : 'Tool & API subscription note'}
-                                </button>
-                                {showTooltip && (
-                                    <div className="absolute bottom-full right-0 mb-2 w-72 sm:w-80 bg-white text-slate-deep text-xs p-4 rounded-xl shadow-xl border border-slate-200 z-50 leading-relaxed">
-                                        <em>{t.tooltip}</em>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        }
-
-        function TalentMatchQuiz({ talents, quizState, setQuizState, onComplete, onCapacityChange, language }) {
+        function TalentMatchQuiz({ talents, quizState, setQuizState, onComplete, onCapacityChange, language, quizRef, isQuizOpen, onCloseQuiz }) {
             const { step, bottleneck, capacity, tools, leadForm, isCollapsed } = quizState;
 
+            // Don't render full DOM if not open and not completed to save resources, but handle collapse state
+            if (!isQuizOpen && !isCollapsed) return null;
+
             const t = language === 'es' ? {
-                title: 'Quiz de Coincidencia de Talento',
-                subtitle: '60 segundos para encontrar su especialista ideal',
-                step1: '¿Cuál es su principal cuello de botella operativo?',
-                step2: '¿Cuántas horas de ejecución dedicada requiere su negocio semanalmente?',
-                step3: '¿Qué herramientas principales quiere que gestione su Agente Dedicado?',
-                step4Prefix: 'Hemos encontrado exactamente',
-                step4Suffix: 'especialistas premium en nuestro bench listos para desplegar.',
+                title: 'Búsqueda Inteligente',
+                subtitle: 'Paso',
+                of: 'de',
+                step1: '¿Qué área necesita resolver con más urgencia?',
+                step1hint: 'Seleccione lo que más le preocupa hoy.',
+                step2: '¿Cuánto apoyo semanal estima necesitar?',
+                step2hint: 'Podrá ajustar esto más adelante.',
+                step3: '¿Qué herramientas usa principalmente?',
+                step3hint: 'Seleccione todas las que apliquen.',
+                step4Prefix: '¡Excelente! Encontramos',
+                step4Suffix: 'especialistas listos para usted.',
+                step4hint: 'Ingrese sus datos para ver su bench personalizado. Cero spam.',
                 firstName: 'Nombre',
-                workEmail: 'Email de Trabajo',
+                workEmail: 'Email',
                 phone: 'Teléfono',
-                cta: 'Desbloquear Mi Coincidencia de Talento',
-                next: 'Continuar',
+                cta: 'Ver Mi Equipo Ideal',
+                next: 'Siguiente',
                 back: 'Atrás',
                 matches: 'Sus Coincidencias',
-                bottleneck: 'Cuello de botella',
-                capacityLabel: 'Capacidad',
-                toolsLabel: 'Herramientas',
+                close: 'Cerrar',
             } : {
-                title: 'Talent Match Quiz',
-                subtitle: '60 seconds to find your ideal specialist match',
-                step1: 'What is your primary operational bottleneck right now?',
-                step2: 'How many hours of dedicated execution does your business require weekly?',
-                step3: 'Which primary tools do you want your Dedicated Agent to manage?',
-                step4Prefix: 'We have found exactly',
-                step4Suffix: 'matching premium specialists on our bench ready to deploy.',
+                title: 'Smart Match',
+                subtitle: 'Step',
+                of: 'of',
+                step1: 'What area requires the most urgent help?',
+                step1hint: 'Pick what feels most pressing right now.',
+                step2: 'How much weekly support do you estimate needing?',
+                step2hint: 'You can easily adjust this later.',
+                step3: 'Which core tools do you use?',
+                step3hint: 'Select all that apply.',
+                step4Prefix: 'Great! We found',
+                step4Suffix: 'specialists ready for you.',
+                step4hint: 'Enter your details to unlock your personalized bench. Zero spam.',
                 firstName: 'First Name',
                 workEmail: 'Work Email',
                 phone: 'Phone Number',
-                cta: 'Unlock My Tailored Talent Bench Match',
-                next: 'Continue',
+                cta: 'See My Ideal Team',
+                next: 'Next',
                 back: 'Back',
                 matches: 'Your Matches',
-                bottleneck: 'Bottleneck',
-                capacityLabel: 'Capacity',
-                toolsLabel: 'Tools',
+                close: 'Close',
             };
 
             const matchCount = useMemo(() => {
-                return talents.filter(talent =>
-                    talentMatchesBottleneck(talent, bottleneck) &&
-                    talentMatchesTools(talent, tools)
-                ).length;
+                return talents.filter(t => talentMatchesBottleneck(t, bottleneck) && talentMatchesTools(t, tools)).length;
             }, [talents, bottleneck, tools]);
 
             const canProceed = () => {
@@ -368,14 +429,8 @@
                 return false;
             };
 
-            const handleNext = () => {
-                if (step < 4) setQuizState(prev => ({ ...prev, step: prev.step + 1 }));
-            };
-
-            const handleBack = () => {
-                if (step > 1) setQuizState(prev => ({ ...prev, step: prev.step - 1 }));
-            };
-
+            const handleNext = () => { if (step < 4) setQuizState(prev => ({ ...prev, step: prev.step + 1 })); };
+            const handleBack = () => { if (step > 1) setQuizState(prev => ({ ...prev, step: prev.step - 1 })); };
             const handleSubmit = (e) => {
                 e.preventDefault();
                 if (!canProceed()) return;
@@ -384,12 +439,7 @@
             };
 
             const toggleTool = (toolId) => {
-                setQuizState(prev => ({
-                    ...prev,
-                    tools: prev.tools.includes(toolId)
-                        ? prev.tools.filter(id => id !== toolId)
-                        : [...prev.tools, toolId],
-                }));
+                setQuizState(prev => ({ ...prev, tools: prev.tools.includes(toolId) ? prev.tools.filter(id => id !== toolId) : [...prev.tools, toolId] }));
             };
 
             if (isCollapsed) {
@@ -398,237 +448,232 @@
                 const toolLabels = tools.map(id => QUIZ_TOOLS.find(tool => tool.id === id)?.label).filter(Boolean);
 
                 return (
-                    <div className="mb-8 bg-white rounded-2xl shadow-xl border border-slate-200 p-5 transition-all duration-300 ease-in-out">
+                    <div ref={quizRef} className="mb-8 glass-panel rounded-3xl shadow-soft-lg p-4 sm:p-5 mx-4 sm:mx-0 animate-scale-in">
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full gradient-badge flex items-center justify-center">
-                                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div className="w-10 h-10 rounded-2xl bg-pastel-mint flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5 text-pastel-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-slate-deep tracking-wide">{t.matches}</h3>
-                                    <p className="text-sm text-slate-500 tracking-wider">
-                                        <span className="font-semibold text-brand-600">{matchCount}</span> {language === 'es' ? 'especialistas coinciden' : 'specialists match your stack'}
+                                    <h3 className="font-semibold text-ink tracking-tight">{t.matches}</h3>
+                                    <p className="text-sm text-ink-muted">
+                                        <span className="font-semibold text-pastel-lilac">{matchCount}</span> {language === 'es' ? 'especialistas listos' : 'specialists ready'}
                                     </p>
                                 </div>
                             </div>
                             <div className="flex flex-wrap gap-2">
-                                <span className="px-3 py-1 bg-slate-100 text-xs font-medium text-slate-600 rounded-full tracking-widest uppercase">
+                                <span className="px-3 py-1.5 bg-pastel-lavender text-[10px] sm:text-[11px] font-medium text-pastel-lilac rounded-full tracking-luxury truncate max-w-[150px] sm:max-w-none">
                                     {bottleneckLabel.split(' ').slice(0, 3).join(' ')}…
                                 </span>
-                                <span className="px-3 py-1 bg-brand-600/10 text-xs font-medium text-brand-600 rounded-full tracking-widest">
+                                <span className="px-3 py-1.5 bg-pastel-mint text-[10px] sm:text-[11px] font-medium text-pastel-sage rounded-full tracking-luxury">
                                     {capacityLabel.split('(')[0].trim()}
                                 </span>
-                                {toolLabels.slice(0, 2).map((label, i) => (
-                                    <span key={i} className="px-3 py-1 bg-accent/10 text-xs font-medium text-emerald-700 rounded-full tracking-widest">
-                                        {label.split('/')[0].trim()}
-                                    </span>
-                                ))}
-                                {toolLabels.length > 2 && (
-                                    <span className="px-3 py-1 bg-slate-100 text-xs font-medium text-slate-500 rounded-full tracking-widest">
-                                        +{toolLabels.length - 2}
-                                    </span>
-                                )}
                             </div>
                         </div>
                     </div>
                 );
             }
 
+            const stepHints = { 1: t.step1hint, 2: t.step2hint, 3: t.step3hint, 4: t.step4hint };
+            const stepTitles = { 1: t.step1, 2: t.step2, 3: t.step3 };
+            const optionClass = (selected) => `flex items-start gap-3 p-3.5 sm:p-4 rounded-2xl border cursor-pointer transition-all duration-300 ease-in-out ${selected ? 'border-pastel-lilac/50 bg-white/90 shadow-soft' : 'border-white/80 bg-white/40 hover:bg-white/70 hover:shadow-soft'}`;
+
             return (
-                <div className="mb-10 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden transition-all duration-300 ease-in-out">
-                    <div className="bg-slate-deep px-6 py-5">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h2 className="text-xl font-bold text-white tracking-wide">{t.title}</h2>
-                                <p className="text-slate-400 text-sm tracking-widest uppercase mt-1">{t.subtitle}</p>
-                            </div>
-                            <div className="flex gap-1.5">
+                <div ref={quizRef} className="mb-10 mx-4 sm:mx-0 glass-panel rounded-3xl shadow-soft-lg overflow-hidden drawer-enter border border-white/60">
+                    <div className="px-5 py-4 border-b border-white/60 flex items-center justify-between bg-white/30">
+                        <div>
+                            <h2 className="text-base sm:text-lg font-semibold text-ink tracking-tight">{t.title}</h2>
+                            <p className="text-[10px] sm:text-xs text-ink-muted tracking-luxury mt-0.5 uppercase">{t.subtitle} {step} {t.of} 4</p>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="hidden sm:flex gap-1.5">
                                 {[1, 2, 3, 4].map(s => (
-                                    <div
-                                        key={s}
-                                        className={`w-8 h-1.5 rounded-full transition-all duration-300 ${
-                                            s <= step ? 'bg-accent' : 'bg-slate-600'
-                                        }`}
-                                    />
+                                    <div key={s} className={`h-1.5 rounded-full transition-all duration-500 ${s <= step ? 'w-8 bg-gradient-to-r from-pastel-lilac to-pastel-sage' : 'w-4 bg-pastel-lavender'}`} />
                                 ))}
                             </div>
+                            <button onClick={onCloseQuiz} className="text-ink-muted hover:text-pastel-rose transition-colors p-1">
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
                         </div>
                     </div>
 
-                    <div className="p-6 sm:p-8">
-                        {step === 1 && (
-                            <div>
-                                <h3 className="text-lg font-semibold text-slate-deep mb-5 tracking-wide">{t.step1}</h3>
-                                <div className="space-y-3">
-                                    {QUIZ_BOTTLENECKS.map(option => (
-                                        <label
-                                            key={option.id}
-                                            className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ease-in-out ${
-                                                bottleneck === option.id
-                                                    ? 'border-brand-600 bg-brand-600/5 shadow-md'
-                                                    : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
-                                            }`}
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="bottleneck"
-                                                checked={bottleneck === option.id}
-                                                onChange={() => setQuizState(prev => ({ ...prev, bottleneck: option.id }))}
-                                                className="mt-1 w-4 h-4 text-brand-600"
-                                            />
-                                            <span className="text-slate-700 text-sm leading-relaxed">{option.label}</span>
-                                        </label>
-                                    ))}
+                    <div className="p-5 sm:p-8">
+                        <div key={step} className="quiz-step-enter">
+                            {step <= 3 && (
+                                <div className="mb-5 sm:mb-6">
+                                    <h3 className="text-lg sm:text-xl font-medium text-ink mb-1.5">{stepTitles[step]}</h3>
+                                    <p className="text-sm text-ink-muted leading-relaxed">{stepHints[step]}</p>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {step === 2 && (
-                            <div>
-                                <h3 className="text-lg font-semibold text-slate-deep mb-5 tracking-wide">{t.step2}</h3>
-                                <div className="space-y-3">
-                                    {QUIZ_CAPACITY.map(option => (
-                                        <label
-                                            key={option.id}
-                                            className={`flex items-start gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ease-in-out ${
-                                                capacity === option.id
-                                                    ? 'border-brand-600 bg-brand-600/5 shadow-md'
-                                                    : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
-                                            }`}
-                                        >
-                                            <input
-                                                type="radio"
-                                                name="capacity"
-                                                checked={capacity === option.id}
-                                                onChange={() => {
-                                                    setQuizState(prev => ({ ...prev, capacity: option.id }));
-                                                    if (onCapacityChange) {
-                                                        onCapacityChange(option.id === 'fulltime');
-                                                    }
-                                                }}
-                                                className="mt-1 w-4 h-4 text-brand-600"
-                                            />
-                                            <span className="text-slate-700 text-sm leading-relaxed">{option.label}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {step === 3 && (
-                            <div>
-                                <h3 className="text-lg font-semibold text-slate-deep mb-5 tracking-wide">{t.step3}</h3>
+                            {step === 1 && (
                                 <div className="grid sm:grid-cols-2 gap-3">
-                                    {QUIZ_TOOLS.map(option => (
-                                        <label
-                                            key={option.id}
-                                            className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all duration-300 ease-in-out ${
-                                                tools.includes(option.id)
-                                                    ? 'border-accent bg-accent/5 shadow-md'
-                                                    : 'border-slate-200 hover:border-slate-300 hover:shadow-sm'
-                                            }`}
-                                        >
-                                            <input
-                                                type="checkbox"
-                                                checked={tools.includes(option.id)}
-                                                onChange={() => toggleTool(option.id)}
-                                                className="w-4 h-4 text-accent rounded"
-                                            />
-                                            <span className="text-slate-700 text-sm">{option.label}</span>
+                                    {QUIZ_BOTTLENECKS.map(option => (
+                                        <label key={option.id} className={optionClass(bottleneck === option.id)}>
+                                            <input type="radio" name="bottleneck" checked={bottleneck === option.id} onChange={() => setQuizState(prev => ({ ...prev, bottleneck: option.id }))} className="mt-1 w-4 h-4 accent-[#7B6FD4] shrink-0" />
+                                            <span className="text-ink text-sm leading-relaxed font-medium">{option.label}</span>
                                         </label>
                                     ))}
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {step === 4 && (
-                            <form onSubmit={handleSubmit}>
-                                <h3 className="text-lg font-semibold text-slate-deep mb-2 tracking-wide">
-                                    {t.step4Prefix}{' '}
-                                    <span className="text-brand-600">{matchCount}</span>{' '}
-                                    {t.step4Suffix}
-                                </h3>
-                                <p className="text-sm text-slate-500 mb-6 tracking-wide">
-                                    {language === 'es'
-                                        ? 'Complete sus datos para desbloquear el bench completo.'
-                                        : 'Complete your details to unlock the full active bench.'}
-                                </p>
-                                <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-slate-600 mb-2 tracking-widest uppercase">{t.firstName}</label>
-                                        <input
-                                            type="text"
-                                            required
-                                            value={leadForm.firstName}
-                                            onChange={(e) => setQuizState(prev => ({
-                                                ...prev,
-                                                leadForm: { ...prev.leadForm, firstName: e.target.value }
-                                            }))}
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="Jane"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-slate-600 mb-2 tracking-widest uppercase">{t.workEmail}</label>
-                                        <input
-                                            type="email"
-                                            required
-                                            value={leadForm.email}
-                                            onChange={(e) => setQuizState(prev => ({
-                                                ...prev,
-                                                leadForm: { ...prev.leadForm, email: e.target.value }
-                                            }))}
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="jane@company.com"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-slate-600 mb-2 tracking-widest uppercase">{t.phone}</label>
-                                        <input
-                                            type="tel"
-                                            required
-                                            value={leadForm.phone}
-                                            onChange={(e) => setQuizState(prev => ({
-                                                ...prev,
-                                                leadForm: { ...prev.leadForm, phone: e.target.value }
-                                            }))}
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="+1 (555) 000-0000"
-                                        />
-                                    </div>
+                            {step === 2 && (
+                                <div className="grid sm:grid-cols-1 gap-3">
+                                    {QUIZ_CAPACITY.map(option => (
+                                        <label key={option.id} className={optionClass(capacity === option.id)}>
+                                            <input type="radio" name="capacity" checked={capacity === option.id}
+                                                onChange={() => { setQuizState(prev => ({ ...prev, capacity: option.id })); if (onCapacityChange) onCapacityChange(option.id === 'fulltime'); }}
+                                                className="mt-1 w-4 h-4 accent-[#7B6FD4] shrink-0" />
+                                            <span className="text-ink text-sm leading-relaxed font-medium">{option.label}</span>
+                                        </label>
+                                    ))}
                                 </div>
-                                <button
-                                    type="submit"
-                                    disabled={!canProceed()}
-                                    className="w-full sm:w-auto bg-gradient-to-r from-brand-600 to-accent hover:from-brand-800 hover:to-emerald-600 text-white px-8 py-4 rounded-xl font-bold tracking-wide transition-all duration-300 ease-in-out shadow-xl hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    {t.cta}
-                                </button>
-                            </form>
-                        )}
+                            )}
+
+                            {step === 3 && (
+                                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                    {QUIZ_TOOLS.map(option => (
+                                        <label key={option.id} className={optionClass(tools.includes(option.id))}>
+                                            <input type="checkbox" checked={tools.includes(option.id)} onChange={() => toggleTool(option.id)} className="w-4 h-4 mt-0.5 accent-[#6EB5A0] rounded shrink-0" />
+                                            <span className="text-ink text-sm font-medium">{option.label}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            )}
+
+                            {step === 4 && (
+                                <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+                                    <div className="text-center mb-6">
+                                        <div className="w-12 h-12 rounded-full bg-pastel-mint flex items-center justify-center mx-auto mb-3 shadow-soft">
+                                            <span className="text-lg font-bold text-pastel-sage">{matchCount}</span>
+                                        </div>
+                                        <h3 className="text-lg sm:text-xl font-medium text-ink mb-2">
+                                            {t.step4Prefix} <span className="gradient-text font-semibold">{matchCount}</span> {t.step4Suffix}
+                                        </h3>
+                                        <p className="text-sm text-ink-muted leading-relaxed">{t.step4hint}</p>
+                                    </div>
+                                    <div className="grid sm:grid-cols-3 gap-3 sm:gap-4 mb-6">
+                                        {[{ key: 'firstName', label: t.firstName, type: 'text' }, { key: 'email', label: t.workEmail, type: 'email' }, { key: 'phone', label: t.phone, type: 'tel' }].map(field => (
+                                            <div key={field.key}>
+                                                <label className="block text-[10px] font-semibold text-ink-muted mb-1.5 tracking-widest uppercase">{field.label}</label>
+                                                <input type={field.type} required value={leadForm[field.key]} onChange={(e) => setQuizState(prev => ({ ...prev, leadForm: { ...prev.leadForm, [field.key]: e.target.value } }))}
+                                                    className="w-full px-4 py-3 bg-white border border-white/50 rounded-xl focus:ring-2 focus:ring-pastel-lilac/30 focus:border-pastel-lilac/40 transition-all duration-300 text-sm shadow-sm" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <button type="submit" disabled={!canProceed()} className="btn-premium w-full sm:w-auto mx-auto block text-white px-10 py-3.5 rounded-full font-semibold text-sm tracking-luxury shadow-soft-lg disabled:opacity-40 disabled:cursor-not-allowed">
+                                        {t.cta}
+                                    </button>
+                                </form>
+                            )}
+                        </div>
 
                         {step < 4 && (
-                            <div className="flex justify-between mt-8 pt-6 border-t border-slate-100">
-                                <button
-                                    onClick={handleBack}
-                                    disabled={step === 1}
-                                    className="px-6 py-2.5 text-slate-500 font-medium rounded-xl hover:bg-slate-100 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed tracking-wide"
-                                >
+                            <div className="flex justify-between items-center mt-8 pt-5 border-t border-white/40">
+                                <button onClick={handleBack} disabled={step === 1} className="px-5 py-2.5 text-ink-muted text-sm font-medium rounded-full hover:bg-white/60 transition-all duration-300 disabled:opacity-0">
                                     {t.back}
                                 </button>
-                                <button
-                                    onClick={handleNext}
-                                    disabled={!canProceed()}
-                                    className="px-8 py-2.5 bg-brand-600 hover:bg-brand-800 text-white font-semibold rounded-xl transition-all duration-300 ease-in-out shadow-lg disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
-                                >
+                                <div className="sm:hidden flex gap-1 mx-2">
+                                    {[1, 2, 3, 4].map(s => <div key={s} className={`h-1.5 rounded-full ${s <= step ? 'w-4 bg-pastel-lilac' : 'w-2 bg-pastel-lavender'}`} />)}
+                                </div>
+                                <button onClick={handleNext} disabled={!canProceed()} className="px-8 py-2.5 bg-pastel-lilac hover:bg-brand-800 text-white text-sm font-semibold rounded-full transition-all duration-300 shadow-soft disabled:opacity-40 disabled:cursor-not-allowed">
                                     {t.next}
                                 </button>
                             </div>
                         )}
                     </div>
                 </div>
+            );
+        }
+
+        function PricingTierBanner({ isFullTime, onToggleCapacity, language, expanded, onToggleExpanded }) {
+            const [showTooltip, setShowTooltip] = useState(false);
+            const t = language === 'es' ? {
+                title: 'Paquetes de Agencia',
+                subtitle: 'Todo incluido · Sin freelancers aislados',
+                partTime: 'Medio Tiempo',
+                fullTime: 'Tiempo Completo −10%',
+                retainer: 'Retainer prepagado para asegurar su especialista.',
+                includes: 'Incluye: Horas dedicadas, gestión QA, y reemplazo instantáneo.',
+                perHour: '/hr',
+                expand: 'Ver tarifas por hora',
+                collapse: 'Ocultar tarifas',
+                from: 'Desde',
+                tooltip: 'Tarifa cubre ejecución. Suscripciones de software se facturan por separado.',
+            } : {
+                title: 'Agency Packages',
+                subtitle: 'All-inclusive · Never isolated freelancers',
+                partTime: 'Part-Time',
+                fullTime: 'Full-Time −10%',
+                retainer: 'Prepaid retainer locks in your dedicated specialist.',
+                includes: 'Includes: Dedicated hours, QA management, & instant backup.',
+                perHour: '/hr',
+                expand: 'View hourly rates',
+                collapse: 'Hide rates',
+                from: 'From',
+                tooltip: 'Rate covers execution time. Software subscriptions billed separately.',
+            };
+
+            const lowestRate = applyDiscount(PRICING_TIERS[0].rate, isFullTime);
+
+            return (
+                <FadeIn delay={120} className="pricing-sticky mb-8 px-4 sm:px-0">
+                    <div className="glass-panel rounded-3xl shadow-soft-lg overflow-hidden border border-white/60">
+                        <button onClick={onToggleExpanded} className="w-full px-4 sm:px-6 py-4 sm:py-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left hover:bg-white/40 transition-all duration-300">
+                            <div className="flex items-center gap-3 sm:gap-4">
+                                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-pastel-lavender flex items-center justify-center shrink-0">
+                                    <svg className="w-5 h-5 text-pastel-lilac" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                </div>
+                                <div>
+                                    <h2 className="text-sm sm:text-base font-semibold text-ink tracking-tight">{t.title}</h2>
+                                    <p className="text-[10px] sm:text-xs text-ink-muted tracking-luxury mt-0.5">
+                                        {t.subtitle} <span className="hidden sm:inline">·</span> <br className="sm:hidden"/> <span className="text-pastel-lilac font-medium">{t.from} ${formatRate(lowestRate)}{t.perHour}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex items-center justify-center gap-2 text-[10px] sm:text-xs font-medium text-pastel-lilac tracking-wide shrink-0 bg-white/50 px-3 py-1.5 rounded-full sm:bg-transparent sm:p-0">
+                                <span>{expanded ? t.collapse : t.expand}</span>
+                                <svg className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </div>
+                        </button>
+
+                        <div className={`transition-all duration-500 ease-in-out overflow-hidden ${expanded ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="px-4 sm:px-6 pb-6 pt-2 border-t border-white/50">
+                                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-5">
+                                    <p className="text-[11px] sm:text-xs text-ink-muted leading-relaxed max-w-lg">{t.includes}</p>
+                                    <div className="flex items-center bg-pastel-lavender/60 rounded-full p-1 self-start sm:self-auto w-full sm:w-auto">
+                                        <button onClick={() => onToggleCapacity(false)} className={`flex-1 sm:flex-none px-4 py-2 rounded-full text-[10px] sm:text-xs font-semibold transition-all duration-300 tracking-luxury truncate ${!isFullTime ? 'bg-white text-pastel-lilac shadow-soft' : 'text-ink-muted hover:text-ink'}`}>
+                                            {t.partTime}
+                                        </button>
+                                        <button onClick={() => onToggleCapacity(true)} className={`flex-1 sm:flex-none px-4 py-2 rounded-full text-[10px] sm:text-xs font-semibold transition-all duration-300 tracking-luxury truncate ${isFullTime ? 'bg-white text-pastel-sage shadow-soft' : 'text-ink-muted hover:text-ink'}`}>
+                                            {t.fullTime}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                                    {PRICING_TIERS.map((tier, i) => {
+                                        const displayRate = applyDiscount(tier.rate, isFullTime);
+                                        const style = TIER_STYLES[tier.id];
+                                        return (
+                                            <div key={tier.id} className={`${style.bg} rounded-2xl p-4 border ${style.border} transition-all duration-300 hover:shadow-soft`} style={{ animationDelay: `${i * 60}ms` }}>
+                                                <div className={`text-[10px] font-semibold ${style.accent} uppercase tracking-widest mb-2`}>{tier.name}</div>
+                                                <div className="flex items-baseline gap-1 mb-1">
+                                                    <span className="text-xl font-semibold text-ink">${formatRate(displayRate)}</span>
+                                                    <span className="text-ink-muted text-xs">{t.perHour}</span>
+                                                </div>
+                                                {isFullTime && <div className="text-[10px] text-ink-light line-through mb-1">${formatRate(tier.rate)}{t.perHour}</div>}
+                                                <p className="text-[11px] text-ink-muted leading-relaxed">{tier.description}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </FadeIn>
             );
         }
 
@@ -640,151 +685,90 @@
             const [confirmed, setConfirmed] = useState(false);
 
             const t = language === 'es' ? {
-                title: 'Reservar Entrevista con',
-                step1: 'Seleccione una fecha',
-                step2: 'Seleccione un horario',
-                step3: 'Confirme sus datos',
-                confirm: 'Confirmar Reserva',
-                confirmed: '¡Entrevista Reservada!',
-                confirmedMsg: 'Recibirá un enlace de calendario en su email en breve.',
-                name: 'Su Nombre',
-                email: 'Su Email',
-                next: 'Siguiente',
-                back: 'Atrás',
+                title: 'Reservar Entrevista',
+                step1: 'Fecha', step2: 'Hora', step3: 'Detalles',
+                confirm: 'Confirmar', confirmed: '¡Reservado!',
+                confirmedMsg: 'Recibirá un enlace de calendario en breve.',
+                name: 'Su Nombre', email: 'Su Email', back: 'Atrás'
             } : {
-                title: 'Instantly Book Interview with',
-                step1: 'Select a date',
-                step2: 'Select a time slot',
-                step3: 'Confirm your details',
-                confirm: 'Confirm Booking',
-                confirmed: 'Interview Booked!',
-                confirmedMsg: 'You will receive a calendar invite at your email shortly.',
-                name: 'Your Name',
-                email: 'Your Email',
-                next: 'Next',
-                back: 'Back',
+                title: 'Book Interview',
+                step1: 'Date', step2: 'Time', step3: 'Details',
+                confirm: 'Confirm', confirmed: 'Booked!',
+                confirmedMsg: 'Calendar invite sent to your email.',
+                name: 'Your Name', email: 'Your Email', back: 'Back'
             };
 
             const upcomingDates = useMemo(() => {
                 const dates = [];
                 const today = new Date();
-                for (let i = 1; i <= 10; i++) {
+                for (let i = 1; dates.length < 6 && i <= 14; i++) {
                     const d = new Date(today);
                     d.setDate(today.getDate() + i);
-                    if (d.getDay() !== 0 && d.getDay() !== 6) {
-                        dates.push(d.toISOString().split('T')[0]);
-                    }
+                    if (d.getDay() !== 0 && d.getDay() !== 6) dates.push(d.toISOString().split('T')[0]);
                 }
-                return dates.slice(0, 7);
+                return dates;
             }, []);
 
             const formatDate = (dateStr) => {
-                const d = new Date(dateStr + 'T12:00:00');
-                return d.toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', {
-                    weekday: 'short', month: 'short', day: 'numeric'
-                });
+                return new Date(dateStr + 'T12:00:00').toLocaleDateString(language === 'es' ? 'es-ES' : 'en-US', { weekday: 'short', month: 'short', day: 'numeric' });
             };
 
             if (confirmed) {
                 return (
-                    <div className="text-center py-4">
-                        <div className="w-14 h-14 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
-                            <svg className="w-7 h-7 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+                    <div className="text-center py-4 animate-scale-in bg-white/50 rounded-2xl p-4 mt-4">
+                        <div className="w-10 h-10 rounded-full bg-pastel-mint flex items-center justify-center mx-auto mb-2">
+                            <svg className="w-5 h-5 text-pastel-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                         </div>
-                        <h4 className="font-bold text-slate-deep mb-1">{t.confirmed}</h4>
-                        <p className="text-xs text-slate-500 mb-3">{t.confirmedMsg}</p>
-                        <p className="text-sm font-semibold text-brand-600">{formatDate(selectedDate)} · {selectedSlot}</p>
+                        <h4 className="font-semibold text-ink text-sm">{t.confirmed}</h4>
+                        <p className="text-[10px] text-ink-muted mb-2">{t.confirmedMsg}</p>
+                        <button onClick={onClose} className="text-[10px] text-pastel-lilac font-medium">{t.back}</button>
                     </div>
                 );
             }
 
             return (
-                <div className="mt-4 pt-4 border-t border-slate-200">
-                    <h4 className="text-sm font-bold text-slate-deep mb-3 flex items-center tracking-wide">
-                        <svg className="w-4 h-4 text-accent mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        {t.title} {talent.full_name.split(' ')[0]}
-                    </h4>
-
-                    <div className="flex gap-1 mb-4">
-                        {[1, 2, 3].map(s => (
-                            <div key={s} className={`flex-1 h-1 rounded-full transition-all duration-300 ${s <= bookingStep ? 'bg-accent' : 'bg-slate-200'}`} />
-                        ))}
+                <div className="mt-4 pt-4 border-t border-white/70">
+                    <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-[11px] font-semibold text-ink flex items-center tracking-luxury uppercase">
+                            <svg className="w-3.5 h-3.5 text-pastel-sage mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            {t.title}
+                        </h4>
+                        <div className="flex gap-1">
+                            {[1, 2, 3].map(s => <div key={s} className={`w-3 h-1 rounded-full ${s <= bookingStep ? 'bg-pastel-lilac' : 'bg-pastel-lavender'}`} />)}
+                        </div>
                     </div>
 
                     {bookingStep === 1 && (
-                        <div>
-                            <p className="text-xs text-slate-500 mb-2 tracking-widest uppercase">{t.step1}</p>
-                            <div className="grid grid-cols-2 gap-2">
-                                {upcomingDates.map(date => (
-                                    <button
-                                        key={date}
-                                        onClick={() => { setSelectedDate(date); setBookingStep(2); }}
-                                        className={`p-2.5 text-xs font-medium rounded-lg border transition-all duration-300 ${
-                                            selectedDate === date
-                                                ? 'border-accent bg-accent/10 text-emerald-800'
-                                                : 'border-slate-200 hover:border-brand-600 text-slate-600'
-                                        }`}
-                                    >
-                                        {formatDate(date)}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="grid grid-cols-2 gap-2 animate-scale-in">
+                            {upcomingDates.map(date => (
+                                <button key={date} onClick={() => { setSelectedDate(date); setBookingStep(2); }} className={`p-2 text-[11px] font-medium rounded-xl border transition-all ${selectedDate === date ? 'border-pastel-sage/40 bg-pastel-mint text-pastel-sage' : 'border-white bg-white/60 hover:bg-white text-ink-muted'}`}>
+                                    {formatDate(date)}
+                                </button>
+                            ))}
                         </div>
                     )}
 
                     {bookingStep === 2 && (
-                        <div>
-                            <p className="text-xs text-slate-500 mb-2 tracking-widest uppercase">{t.step2}</p>
-                            <div className="grid grid-cols-3 gap-2">
+                        <div className="animate-scale-in">
+                            <div className="grid grid-cols-3 gap-1.5 mb-2">
                                 {BOOKING_SLOTS.map(slot => (
-                                    <button
-                                        key={slot}
-                                        onClick={() => { setSelectedSlot(slot); setBookingStep(3); }}
-                                        className={`p-2 text-xs font-medium rounded-lg border transition-all duration-300 ${
-                                            selectedSlot === slot
-                                                ? 'border-accent bg-accent/10 text-emerald-800'
-                                                : 'border-slate-200 hover:border-brand-600 text-slate-600'
-                                        }`}
-                                    >
+                                    <button key={slot} onClick={() => { setSelectedSlot(slot); setBookingStep(3); }} className={`p-1.5 text-[10px] font-medium rounded-lg border transition-all ${selectedSlot === slot ? 'border-pastel-sage/40 bg-pastel-mint text-pastel-sage' : 'border-white bg-white/60 hover:bg-white text-ink-muted'}`}>
                                         {slot}
                                     </button>
                                 ))}
                             </div>
-                            <button onClick={() => setBookingStep(1)} className="text-xs text-slate-400 mt-2 hover:text-brand-600">{t.back}</button>
+                            <button onClick={() => setBookingStep(1)} className="text-[10px] text-ink-light hover:text-ink">{t.back}</button>
                         </div>
                     )}
 
                     {bookingStep === 3 && (
-                        <div>
-                            <p className="text-xs text-slate-500 mb-2 tracking-widest uppercase">{t.step3}</p>
-                            <p className="text-xs font-semibold text-brand-600 mb-3">{formatDate(selectedDate)} · {selectedSlot}</p>
-                            <div className="space-y-2 mb-3">
-                                <input
-                                    type="text"
-                                    placeholder={t.name}
-                                    value={bookingForm.name}
-                                    onChange={(e) => setBookingForm(prev => ({ ...prev, name: e.target.value }))}
-                                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-600"
-                                />
-                                <input
-                                    type="email"
-                                    placeholder={t.email}
-                                    value={bookingForm.email}
-                                    onChange={(e) => setBookingForm(prev => ({ ...prev, email: e.target.value }))}
-                                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-600"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => setBookingStep(2)} className="flex-1 text-xs py-2 text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50">{t.back}</button>
-                                <button
-                                    onClick={() => bookingForm.name && bookingForm.email && setConfirmed(true)}
-                                    disabled={!bookingForm.name || !bookingForm.email}
-                                    className="flex-1 text-xs py-2 bg-accent hover:bg-emerald-600 text-white font-semibold rounded-lg disabled:opacity-50 transition-all duration-300"
-                                >
+                        <div className="animate-scale-in space-y-2">
+                            <p className="text-[10px] font-medium text-pastel-lilac text-center">{formatDate(selectedDate)} · {selectedSlot}</p>
+                            <input type="text" placeholder={t.name} value={bookingForm.name} onChange={(e) => setBookingForm(prev => ({ ...prev, name: e.target.value }))} className="w-full px-3 py-2 text-xs bg-white/80 border border-white rounded-lg focus:ring-1 focus:ring-pastel-lilac" />
+                            <input type="email" placeholder={t.email} value={bookingForm.email} onChange={(e) => setBookingForm(prev => ({ ...prev, email: e.target.value }))} className="w-full px-3 py-2 text-xs bg-white/80 border border-white rounded-lg focus:ring-1 focus:ring-pastel-lilac" />
+                            <div className="flex gap-2 pt-1">
+                                <button onClick={() => setBookingStep(2)} className="flex-1 text-[10px] py-2 text-ink-muted bg-white/50 rounded-lg">{t.back}</button>
+                                <button onClick={() => bookingForm.name && bookingForm.email && setConfirmed(true)} disabled={!bookingForm.name || !bookingForm.email} className="flex-1 text-[10px] py-2 bg-pastel-sage text-white font-medium rounded-lg disabled:opacity-50">
                                     {t.confirm}
                                 </button>
                             </div>
@@ -794,297 +778,177 @@
             );
         }
 
-        function isDirectMediaUrl(url) {
-            if (!url) return false;
-            return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url) || url.startsWith('blob:');
-        }
-
-        function isEmbedUrl(url) {
-            if (!url) return false;
-            return /youtube|youtu\.be|vimeo|embed/i.test(url);
-        }
-
-        function TalentCard({ talent, language, onRequestInterview, isLocked, index }) {
+        function TalentCard({ talent, language, onRequestInterview, isLocked, index, onUnlockClick }) {
             const [isFlipped, setIsFlipped] = useState(false);
-            const [isHovering, setIsHovering] = useState(false);
-            const [showInlineMedia, setShowInlineMedia] = useState(false);
-            const videoRef = useRef(null);
-
+            const [showBooking, setShowBooking] = useState(false);
             const available48h = isAvailableWithin48Hours(talent);
-            const hasMedia = !!talent.media_intro_url;
-            const isAudio = hasMedia && /\.(mp3|wav|ogg|m4a)(\?|$)/i.test(talent.media_intro_url);
-            const isDirectVideo = hasMedia && !isAudio && (talent.media_type === 'video' || isDirectMediaUrl(talent.media_intro_url));
-            const isEmbedVideo = hasMedia && !isAudio && isEmbedUrl(talent.media_intro_url);
 
             const t = language === 'es' ? {
-                experience: 'Experiencia',
-                education: 'Educación',
-                viewIntro: 'Ver Introducción',
-                requestInterview: 'Solicitar Entrevista',
-                viewPortfolio: 'Ver Portafolio Completo y CV',
-                agencyManaged: 'Paquete de Agencia Gestionado',
-                available48: 'Disponible en 48 Horas',
-                onStandby: 'Verificado y en Espera',
-                unlockMsg: '12+ Más Talentos Especializados Coinciden con Su Stack. Complete el Quiz de 60 Segundos Arriba para Desbloquear el Bench Activo.',
+                experience: 'Experiencia', education: 'Educación', requestInterview: 'Entrevista',
+                viewPortfolio: 'Ver CV Completo', agencyManaged: 'Agencia Gestionada',
+                available48: 'Disponible en 48h', onStandby: 'En Espera',
+                unlockMsg: 'Complete el quiz para desbloquear más perfiles compatibles.', unlockCta: 'Desbloquear Perfiles',
             } : {
-                experience: 'Experience',
-                education: 'Education',
-                viewIntro: 'View Introduction',
-                requestInterview: 'Request Interview',
-                viewPortfolio: 'View Full Portfolio & CV',
-                agencyManaged: 'Agency-Managed Package',
-                available48: 'Available Within 48 Hours',
-                onStandby: 'Fully Vetted & On-Standby',
-                unlockMsg: '12+ More Specialized Talents Match Your Stack. Complete the 60-Second Match Quiz Above to Unlock the Active Bench.',
-            };
-
-            useEffect(() => {
-                if (isHovering && videoRef.current && isDirectVideo) {
-                    videoRef.current.play().catch(() => {});
-                } else if (!isHovering && videoRef.current) {
-                    videoRef.current.pause();
-                    videoRef.current.currentTime = 0;
-                }
-            }, [isHovering, isDirectVideo]);
-
-            const handleMediaIntro = (e) => {
-                e.stopPropagation();
-                setShowInlineMedia(!showInlineMedia);
-            };
-
-            const renderPhotoArea = () => {
-                const showHoverPreview = (isHovering || showInlineMedia) && hasMedia;
-
-                return (
-                    <div
-                        className="relative w-28 h-28 mx-auto mb-4"
-                        onMouseEnter={() => setIsHovering(true)}
-                        onMouseLeave={() => setIsHovering(false)}
-                    >
-                        {showHoverPreview && isDirectVideo ? (
-                            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-brand-600 media-preview-enter shadow-xl">
-                                <video
-                                    ref={videoRef}
-                                    src={talent.media_intro_url}
-                                    className="w-full h-full object-cover"
-                                    muted
-                                    loop
-                                    playsInline
-                                    autoPlay
-                                />
-                            </div>
-                        ) : showHoverPreview && isEmbedVideo ? (
-                            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-brand-600 media-preview-enter shadow-xl bg-slate-deep">
-                                <iframe
-                                    src={talent.media_intro_url}
-                                    className="w-full h-full pointer-events-none scale-150"
-                                    frameBorder="0"
-                                    allow="autoplay; encrypted-media"
-                                    title={`${talent.full_name} intro`}
-                                />
-                            </div>
-                        ) : showHoverPreview && isAudio ? (
-                            <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-brand-600 bg-slate-deep flex items-center justify-center media-preview-enter shadow-xl">
-                                <audio
-                                    src={talent.media_intro_url}
-                                    controls
-                                    className="w-24"
-                                    onClick={(e) => e.stopPropagation()}
-                                />
-                            </div>
-                        ) : talent.photo_url ? (
-                            <img
-                                src={talent.photo_url}
-                                alt={talent.full_name}
-                                className="w-28 h-28 rounded-full object-cover border-4 border-brand-600 transition-all duration-300 ease-in-out shadow-lg"
-                            />
-                        ) : (
-                            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-brand-600 to-accent flex items-center justify-center shadow-lg">
-                                <span className="text-3xl font-bold text-white">
-                                    {talent.full_name.charAt(0)}
-                                </span>
-                            </div>
-                        )}
-                        <div className="absolute -bottom-1 -right-1 bg-emerald-500 w-7 h-7 rounded-full border-4 border-white flex items-center justify-center shadow-md">
-                            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                        </div>
-                    </div>
-                );
+                experience: 'Experience', education: 'Education', requestInterview: 'Interview',
+                viewPortfolio: 'View Full CV', agencyManaged: 'Agency-Managed',
+                available48: 'Ready in 48h', onStandby: 'On Standby',
+                unlockMsg: 'Take the quick quiz to unlock more matching profiles.', unlockCta: 'Unlock Profiles',
             };
 
             return (
-                <div className="relative">
-                    <div className={`flip-card h-[540px] transition-all duration-300 ease-in-out ${isFlipped ? 'flipped' : ''} ${!isLocked ? 'hover:shadow-2xl' : ''}`}>
+                <FadeIn delay={Math.min(index * 60, 300)} className="relative h-full">
+                    <div className={`flip-card h-[460px] sm:h-[480px] card-hover ${isFlipped ? 'flipped' : ''} ${isLocked ? 'is-locked opacity-90' : ''}`}>
                         <div className="flip-card-inner">
                             {/* Front */}
-                            <div className={`flip-card-front shadow-xl border border-slate-200/80 p-6 flex flex-col rounded-2xl transition-all duration-300 ease-in-out ${!isLocked ? 'hover:border-brand-600/30' : ''}`}>
-                                {renderPhotoArea()}
-
-                                <div className="text-center mb-3">
-                                    <div className="flex items-center justify-center gap-2 flex-wrap mb-1">
-                                        <h3 className="text-xl font-bold text-slate-deep">{talent.full_name}</h3>
+                            <div className="flip-card-front shadow-card border border-white p-5 flex flex-col justify-between">
+                                <div>
+                                    <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-4">
+                                        {talent.photo_url ? (
+                                            <img src={talent.photo_url} alt={talent.full_name} className="w-full h-full rounded-full object-cover ring-4 ring-white shadow-sm" />
+                                        ) : (
+                                            <div className="w-full h-full rounded-full gradient-badge flex items-center justify-center shadow-sm">
+                                                <span className="text-3xl font-bold text-white">{talent.full_name.charAt(0)}</span>
+                                            </div>
+                                        )}
+                                        <div className={`absolute bottom-0 right-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full ring-4 ring-white flex items-center justify-center shadow-soft ${available48h ? 'bg-pastel-sage' : 'bg-orange-300'}`}>
+                                            <svg className="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                                        </div>
                                     </div>
-                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-widest uppercase ${
-                                        available48h
-                                            ? 'bg-emerald-100 text-emerald-700'
-                                            : 'bg-amber-100 text-amber-700'
-                                    }`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full ${available48h ? 'bg-emerald-500' : 'bg-amber-500'}`} />
-                                        {available48h ? t.available48 : t.onStandby}
-                                    </span>
-                                    <p className="text-brand-600 font-semibold mt-2 tracking-wide">{talent.role_type}</p>
-                                </div>
 
-                                <div className="flex-grow mb-4">
-                                    <p className="text-slate-600 text-sm leading-relaxed line-clamp-4">
+                                    <div className="text-center mb-4">
+                                        <h3 className="text-lg font-semibold text-ink tracking-tight mb-0.5 truncate">{talent.full_name}</h3>
+                                        <p className="text-pastel-lilac font-medium text-xs tracking-tight truncate">{talent.role_type}</p>
+                                        <div className="mt-2 flex justify-center">
+                                            <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-medium tracking-widest uppercase ${available48h ? 'bg-pastel-mint text-pastel-sage' : 'bg-pastel-peach text-orange-400'}`}>
+                                                {available48h ? t.available48 : t.onStandby}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-ink-muted text-xs sm:text-sm leading-relaxed line-clamp-4 mb-4">
                                         {talent.summary}
                                     </p>
                                 </div>
 
-                                <div className="mb-4 space-y-2">
-                                    {talent.experience && talent.experience.length > 0 && (
-                                        <div className="flex items-center text-sm text-slate-600">
-                                            <svg className="w-4 h-4 text-accent mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                            </svg>
-                                            <span>{talent.experience.length}+ years of experience</span>
-                                        </div>
-                                    )}
-                                    <div className="flex items-center text-sm text-slate-600">
-                                        <svg className="w-4 h-4 text-accent mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                        </svg>
-                                        <span>Bilingual (English/Spanish)</span>
-                                    </div>
-                                </div>
-
-                                <div className="pt-4 border-t border-slate-200 space-y-3">
-                                    <div className="text-center">
-                                        <span className="text-xs font-semibold text-slate-400 tracking-widest uppercase">{t.agencyManaged}</span>
-                                    </div>
+                                <div>
                                     <div className="flex gap-2">
-                                        {hasMedia && (
-                                            <button
-                                                onClick={handleMediaIntro}
-                                                className="no-flip flex-1 text-brand-600 hover:text-brand-800 text-sm font-medium flex items-center justify-center py-2.5 border border-brand-600/30 rounded-xl hover:bg-brand-600/5 transition-all duration-300 ease-in-out"
-                                            >
-                                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                {t.viewIntro}
-                                            </button>
-                                        )}
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                onRequestInterview(talent);
-                                            }}
-                                            className="no-flip flex-1 bg-accent hover:bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 ease-in-out shadow-lg hover:shadow-xl flex items-center justify-center text-sm"
-                                        >
+                                        <button onClick={(e) => { e.stopPropagation(); setIsFlipped(true); }} className="no-flip flex-1 bg-white border border-pastel-lilac/20 text-pastel-lilac hover:bg-pastel-lavender/50 text-[11px] sm:text-xs font-semibold py-2.5 rounded-xl transition-all">
+                                            {t.viewPortfolio}
+                                        </button>
+                                        <button onClick={(e) => { e.stopPropagation(); onRequestInterview(talent); }} className="no-flip flex-1 bg-pastel-sage text-white shadow-soft hover:opacity-90 text-[11px] sm:text-xs font-semibold py-2.5 rounded-xl transition-all flex items-center justify-center gap-1">
                                             {t.requestInterview}
-                                            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                                            </svg>
                                         </button>
                                     </div>
-                                </div>
-
-                                <div className="text-center mt-3">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsFlipped(true);
-                                        }}
-                                        className="no-flip text-xs text-brand-600 hover:text-brand-800 font-medium underline underline-offset-2 tracking-wide transition-all duration-300"
-                                    >
-                                        {t.viewPortfolio}
-                                    </button>
+                                    <p className="text-center text-[9px] text-ink-light tracking-widest uppercase mt-3">{t.agencyManaged}</p>
                                 </div>
                             </div>
 
                             {/* Back */}
-                            <div className="flip-card-back shadow-xl border border-slate-200/80 p-6 overflow-y-auto rounded-2xl">
-                                <div className="text-center mb-4">
-                                    <h3 className="text-xl font-bold text-slate-deep">{talent.full_name}</h3>
-                                    <p className="text-brand-600 font-semibold tracking-wide">{talent.role_type}</p>
+                            <div className="flip-card-back shadow-card border border-white p-5 flex flex-col relative">
+                                <button onClick={(e) => { e.stopPropagation(); setIsFlipped(false); setShowBooking(false); }} className="absolute top-4 right-4 w-8 h-8 bg-white/80 rounded-full flex items-center justify-center text-ink-light hover:text-ink z-10 shadow-sm">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                </button>
+                                
+                                <div className="text-center mb-4 pt-2">
+                                    <h3 className="text-base font-semibold text-ink">{talent.full_name}</h3>
+                                    <p className="text-pastel-lilac font-medium text-[11px]">{talent.role_type}</p>
                                 </div>
 
-                                {talent.experience && talent.experience.length > 0 && (
-                                    <div className="mb-4">
-                                        <h4 className="text-sm font-bold text-slate-deep mb-2 flex items-center tracking-widest uppercase">
-                                            <svg className="w-4 h-4 text-brand-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                            </svg>
-                                            {t.experience}
-                                        </h4>
-                                        <div className="space-y-2">
-                                            {talent.experience.map((exp, idx) => (
-                                                <div key={idx} className="bg-slate-100 p-3 rounded-xl">
-                                                    <div className="font-semibold text-sm text-slate-deep">{exp.role}</div>
-                                                    <div className="text-xs text-slate-500">{exp.company}</div>
-                                                    <div className="text-xs text-slate-400">{exp.duration}</div>
+                                <div className="flex-grow overflow-y-auto pr-1 pb-4">
+                                    {!showBooking ? (
+                                        <>
+                                            {talent.experience && talent.experience.length > 0 && (
+                                                <div className="mb-4">
+                                                    <h4 className="text-[10px] font-semibold text-ink-muted mb-2 uppercase tracking-widest">{t.experience}</h4>
+                                                    <div className="space-y-1.5">
+                                                        {talent.experience.map((exp, idx) => (
+                                                            <div key={idx} className="bg-pastel-lavender/30 p-2.5 rounded-xl border border-white/50">
+                                                                <div className="font-medium text-xs text-ink">{exp.role}</div>
+                                                                <div className="text-[10px] text-ink-muted">{exp.company} • {exp.duration}</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {talent.education && talent.education.length > 0 && (
-                                    <div className="mb-2">
-                                        <h4 className="text-sm font-bold text-slate-deep mb-2 flex items-center tracking-widest uppercase">
-                                            <svg className="w-4 h-4 text-brand-600 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                            </svg>
-                                            {t.education}
-                                        </h4>
-                                        <div className="space-y-2">
-                                            {talent.education.map((edu, idx) => (
-                                                <div key={idx} className="bg-slate-100 p-3 rounded-xl">
-                                                    <div className="font-semibold text-sm text-slate-deep">{edu.degree}</div>
-                                                    <div className="text-xs text-slate-500">{edu.institution}</div>
-                                                    <div className="text-xs text-slate-400">{edu.year}</div>
+                                            )}
+                                            {talent.education && talent.education.length > 0 && (
+                                                <div className="mb-2">
+                                                    <h4 className="text-[10px] font-semibold text-ink-muted mb-2 uppercase tracking-widest">{t.education}</h4>
+                                                    <div className="space-y-1.5">
+                                                        {talent.education.map((edu, idx) => (
+                                                            <div key={idx} className="bg-pastel-mint/30 p-2.5 rounded-xl border border-white/50">
+                                                                <div className="font-medium text-xs text-ink">{edu.degree}</div>
+                                                                <div className="text-[10px] text-ink-muted">{edu.institution} • {edu.year}</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                <InstantBookingFlow talent={talent} language={language} />
-
-                                <div className="text-center mt-3">
-                                    <button
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setIsFlipped(false);
-                                        }}
-                                        className="no-flip text-xs text-slate-400 hover:text-brand-600 font-medium tracking-wide transition-all duration-300"
-                                    >
-                                        ← {language === 'es' ? 'Volver' : 'Back to profile'}
-                                    </button>
+                                            )}
+                                        </>
+                                    ) : (
+                                        <InstantBookingFlow talent={talent} language={language} onClose={() => setShowBooking(false)} />
+                                    )}
                                 </div>
+
+                                {!showBooking && (
+                                    <div className="pt-3 border-t border-white/50 mt-auto shrink-0">
+                                        <button onClick={(e) => { e.stopPropagation(); setShowBooking(true); }} className="w-full bg-pastel-sage text-white py-2.5 rounded-xl text-xs font-semibold shadow-soft hover:opacity-90 transition-opacity">
+                                            {language === 'es' ? 'Agendar Llamada Ya' : 'Schedule Call Now'}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     {isLocked && (
-                        <div className="absolute inset-0 z-10 rounded-2xl flex items-center justify-center">
-                            <div className="absolute inset-0 rounded-2xl bg-white/30" style={{ backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)' }} />
-                            <div className="relative z-20 mx-6 text-center bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-slate-200 max-w-xs pointer-events-auto">
-                                <div className="w-12 h-12 rounded-full bg-slate-deep flex items-center justify-center mx-auto mb-4">
-                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                                    </svg>
+                        <div className="absolute inset-0 z-20 rounded-3xl flex items-center justify-center cursor-pointer p-4" onClick={onUnlockClick}>
+                            <div className="absolute inset-0 rounded-3xl bg-white/30 backdrop-blur-sm" />
+                            <div className="relative z-30 text-center glass-panel rounded-2xl p-5 shadow-soft-lg w-full max-w-[240px] pointer-events-auto border border-white">
+                                <div className="w-10 h-10 rounded-full bg-pastel-lavender flex items-center justify-center mx-auto mb-3 shadow-sm">
+                                    <svg className="w-4 h-4 text-pastel-lilac" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
                                 </div>
-                                <p className="text-sm font-semibold text-slate-deep leading-relaxed tracking-wide">
-                                    {t.unlockMsg}
-                                </p>
+                                <p className="text-[11px] text-ink-muted leading-relaxed mb-4">{t.unlockMsg}</p>
+                                <span className="inline-block bg-pastel-lilac text-white text-[10px] font-semibold px-4 py-2 rounded-full tracking-widest shadow-sm">
+                                    {t.unlockCta}
+                                </span>
                             </div>
                         </div>
                     )}
-                </div>
+                </FadeIn>
+            );
+        }
+
+        function ZeroResultsCTA({ language, onRequestCustom }) {
+            const t = language === 'es' ? {
+                title: 'No encontramos coincidencias exactas en nuestra vista pública.',
+                desc: 'Pero no se preocupe. Tenemos una base de datos privada más extensa. Solicite el perfil específico que necesita y nuestro equipo de reclutamiento lo encontrará y presentará en menos de 48 horas.',
+                btn: 'Solicitar Búsqueda Personalizada (48h)',
+            } : {
+                title: 'No exact matches found in our public bench.',
+                desc: 'Don\'t worry. We have a larger private network. Request the specific profile you need, and our dedicated recruiting team will source and present them to you within 48 hours.',
+                btn: 'Request Custom Search (48h)',
+            };
+
+            return (
+                <FadeIn className="max-w-2xl mx-auto px-4 w-full">
+                    <div className="glass-panel rounded-[2rem] p-8 sm:p-10 text-center shadow-soft-lg border border-white/80 relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-pastel-blush rounded-full filter blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
+                        <div className="absolute bottom-0 left-0 w-24 h-24 bg-pastel-lavender rounded-full filter blur-2xl opacity-50 translate-y-1/2 -translate-x-1/2"></div>
+                        
+                        <div className="relative z-10">
+                            <div className="w-14 h-14 rounded-full bg-pastel-lavender flex items-center justify-center mx-auto mb-5 shadow-sm">
+                                <svg className="w-6 h-6 text-pastel-lilac" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                                </svg>
+                            </div>
+                            <h3 className="text-xl sm:text-2xl font-semibold text-ink mb-3 tracking-tight">{t.title}</h3>
+                            <p className="text-ink-muted text-sm leading-relaxed mb-8 max-w-lg mx-auto">{t.desc}</p>
+                            <button onClick={onRequestCustom} className="btn-premium text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-full font-semibold text-sm tracking-luxury shadow-soft-lg w-full sm:w-auto">
+                                {t.btn}
+                            </button>
+                        </div>
+                    </div>
+                </FadeIn>
             );
         }
 
@@ -1095,367 +959,241 @@
             const [searchTerm, setSearchTerm] = useState('');
             const [selectedCategory, setSelectedCategory] = useState('all');
             const [language, setLanguage] = useState('en');
-            const [showInterviewModal, setShowInterviewModal] = useState(false);
+            
+            // Modal states
+            const [showModal, setShowModal] = useState(false);
+            const [modalMode, setModalMode] = useState('interview'); // 'interview' or 'custom'
             const [selectedTalent, setSelectedTalent] = useState(null);
+            
+            // Quiz states
+            const [isQuizOpen, setIsQuizOpen] = useState(false);
             const [quizCompleted, setQuizCompleted] = useState(false);
             const [pricingFullTime, setPricingFullTime] = useState(false);
-            const [quizState, setQuizState] = useState({
-                step: 1,
-                bottleneck: '',
-                capacity: '',
-                tools: [],
-                leadForm: { firstName: '', email: '', phone: '' },
-                isCollapsed: false,
-            });
+            const [quizState, setQuizState] = useState({ step: 1, bottleneck: '', capacity: '', tools: [], leadForm: { firstName: '', email: '', phone: '' }, isCollapsed: false });
             const [quizFilters, setQuizFilters] = useState(null);
+            const [pricingExpanded, setPricingExpanded] = useState(false);
+            const quizRef = useRef(null);
+
+            const openQuiz = useCallback(() => {
+                setIsQuizOpen(true);
+                setTimeout(() => quizRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+            }, []);
 
             useEffect(() => {
-                fetchTalents();
+                if(supabase) fetchTalents();
+                else {
+                    setLoading(false);
+                    setError('Database connection error.');
+                }
             }, []);
 
             const fetchTalents = async () => {
-                setLoading(true);
-                setError('');
-
+                setLoading(true); setError('');
                 try {
-                    const { data, error: supabaseError } = await supabase
-                        .from('public_talent_bench')
-                        .select('*')
-                        .order('full_name', { ascending: true });
-
+                    const { data, error: supabaseError } = await supabase.from('public_talent_bench').select('*').order('full_name', { ascending: true });
                     if (supabaseError) throw supabaseError;
-
                     setTalents(data || []);
                 } catch (err) {
-                    console.error('Error fetching talents:', err);
-                    setError('Failed to load talent data. Please try again later.');
-                } finally {
-                    setLoading(false);
-                }
+                    console.error('Error:', err);
+                    // Provide mock data if DB fails so UI can be evaluated
+                    setTalents([
+                        { id: 1, full_name: 'Elena R.', role_type: 'Bilingual V.A.', summary: 'Expert in inbox management and scheduling.', category_id: 3, available_within_48h: true, tags: ['admin'] },
+                        { id: 2, full_name: 'Carlos M.', role_type: 'GoHighLevel Expert', summary: 'Building complex automations and funnels.', category_id: 5, available_within_48h: false, tags: ['ghl'] },
+                        { id: 3, full_name: 'Sofia T.', role_type: 'Video Editor', summary: 'Short form content for TikTok and Reels.', category_id: 4, available_within_48h: true, tags: ['video'] },
+                    ]);
+                } finally { setLoading(false); }
             };
 
             const handleQuizComplete = useCallback((data) => {
-                setQuizCompleted(true);
-                setQuizFilters(data);
-                if (data.capacity === 'fulltime') {
-                    setPricingFullTime(true);
-                }
+                setQuizCompleted(true); setQuizFilters(data);
+                if (data.capacity === 'fulltime') setPricingFullTime(true);
             }, []);
 
             const filteredTalents = useMemo(() => {
                 return talents.filter(talent => {
-                    const matchesSearch =
-                        talent.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        talent.role_type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        talent.summary.toLowerCase().includes(searchTerm.toLowerCase());
-
+                    const matchesSearch = talent.full_name.toLowerCase().includes(searchTerm.toLowerCase()) || talent.role_type.toLowerCase().includes(searchTerm.toLowerCase()) || talent.summary.toLowerCase().includes(searchTerm.toLowerCase());
                     const matchesCategory = selectedCategory === 'all' || talent.category_id === selectedCategory;
-
                     let matchesQuiz = true;
                     if (quizCompleted && quizFilters) {
-                        matchesQuiz =
-                            talentMatchesBottleneck(talent, quizFilters.bottleneck) &&
-                            talentMatchesTools(talent, quizFilters.tools);
+                        matchesQuiz = talentMatchesBottleneck(talent, quizFilters.bottleneck) && talentMatchesTools(talent, quizFilters.tools);
                     }
-
                     return matchesSearch && matchesCategory && matchesQuiz;
                 });
             }, [talents, searchTerm, selectedCategory, quizCompleted, quizFilters]);
 
             const handleRequestInterview = (talent) => {
-                setSelectedTalent(talent);
-                setShowInterviewModal(true);
+                setSelectedTalent(talent); setModalMode('interview'); setShowModal(true);
+            };
+
+            const handleCustomRequest = () => {
+                setSelectedTalent(null); setModalMode('custom'); setShowModal(true);
             };
 
             const t = language === 'es' ? {
-                title: 'Bench de Talento Premium',
-                subtitle: 'Paquetes de agencia todo incluido con especialistas bilingües verificados',
-                searchPlaceholder: 'Buscar por nombre, rol o habilidades...',
-                resultsFound: 'especialistas premium encontrados',
-                loading: 'Cargando talento...',
-                error: 'Error',
-                retry: 'Reintentar',
-                noResults: 'No se encontró talento',
-                tryAdjusting: 'Intenta ajustar tu búsqueda o filtros',
-                scheduleInterview: 'Programar Entrevista',
-                close: 'Cerrar',
-                contactInfo: 'Información de Contacto',
-                yourName: 'Tu Nombre',
-                yourEmail: 'Tu Email',
-                yourPhone: 'Teléfono (Opcional)',
-                message: 'Mensaje (Opcional)',
-                send: 'Enviar Solicitud',
+                title: 'Talent Bench', subtitle: 'Especialistas verificados, listos para desplegar en su negocio',
+                searchPlaceholder: 'Buscar rol o habilidad...', resultsFound: 'especialistas disponibles',
+                loading: 'Cargando talento...', error: 'Error', retry: 'Reintentar',
+                scheduleInterview: 'Programar Entrevista', customRequestTitle: 'Búsqueda Personalizada (48h)',
+                close: 'Cancelar', send: 'Enviar Solicitud',
             } : {
-                title: 'Premium Talent Bench',
-                subtitle: 'All-inclusive agency bundles with vetted, bilingual specialists ready to deploy',
-                searchPlaceholder: 'Search by name, role, or skills...',
-                resultsFound: 'premium specialists found',
-                loading: 'Loading talent...',
-                error: 'Error',
-                retry: 'Retry',
-                noResults: 'No talent found',
-                tryAdjusting: 'Try adjusting your search or filters',
-                scheduleInterview: 'Schedule Interview',
-                close: 'Close',
-                contactInfo: 'Contact Information',
-                yourName: 'Your Name',
-                yourEmail: 'Your Email',
-                yourPhone: 'Phone Number (Optional)',
-                message: 'Message (Optional)',
-                send: 'Send Request',
+                title: 'Talent Bench', subtitle: 'Vetted specialists, ready to deploy into your business',
+                searchPlaceholder: 'Search role or skill...', resultsFound: 'specialists available',
+                loading: 'Loading talent...', error: 'Error', retry: 'Retry',
+                scheduleInterview: 'Schedule Interview', customRequestTitle: 'Custom Search Request (48h)',
+                close: 'Cancel', send: 'Send Request',
             };
 
             return (
-                <div className="min-h-screen bg-slate-clean">
-                    {/* Header */}
-                    <header className="bg-slate-deep shadow-xl sticky top-0 z-40">
-                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-                            <div className="flex items-center justify-between mb-4">
-                                <a href="/" className="flex items-center space-x-2 group">
-                                    <svg className="w-8 h-8 text-accent group-hover:text-white transition-all duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                    </svg>
-                                    <span className="text-2xl font-bold text-white tracking-wide">ByP Solutions</span>
+                <div className="min-h-screen bg-cream relative selection:bg-pastel-lilac/30 selection:text-brand-800 pb-20">
+                    <AmbientBackground />
+
+                    <header className="glass-panel sticky top-0 z-40 border-b border-white/60 shadow-sm transition-all duration-300">
+                        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+                            <div className="flex items-center justify-between">
+                                <a href="/" className="flex items-center gap-3 group">
+                                    <div className="bg-white rounded-xl shadow-sm p-1 transition-transform duration-300 group-hover:scale-105 border border-white/50">
+                                        <img src="https://bypsolutions.netlify.app/img/logo.jpg" alt="ByP Solutions Logo" className="h-7 sm:h-9 w-auto rounded-lg object-contain" onerror="this.style.display='none'" />
+                                        <svg className="w-7 h-7 text-pastel-lilac hidden fallback-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                                    </div>
+                                    <span className="hidden sm:block text-lg font-semibold text-ink tracking-tight">ByP Solutions</span>
                                 </a>
 
-                                <div className="flex items-center space-x-2 bg-slate-800 rounded-xl p-1 border border-slate-700">
-                                    <button
-                                        onClick={() => setLanguage('en')}
-                                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out tracking-wide ${
-                                            language === 'en'
-                                                ? 'bg-brand-600 text-white shadow-lg'
-                                                : 'text-slate-400 hover:text-white'
-                                        }`}
-                                    >
-                                        EN
-                                    </button>
-                                    <button
-                                        onClick={() => setLanguage('es')}
-                                        className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ease-in-out tracking-wide ${
-                                            language === 'es'
-                                                ? 'bg-brand-600 text-white shadow-lg'
-                                                : 'text-slate-400 hover:text-white'
-                                        }`}
-                                    >
-                                        ES
-                                    </button>
+                                <div className="flex items-center bg-pastel-lavender/50 rounded-full p-1 border border-white/40">
+                                    {['en', 'es'].map(lang => (
+                                        <button key={lang} onClick={() => setLanguage(lang)}
+                                            className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-medium transition-all duration-300 tracking-luxury uppercase ${language === lang ? 'bg-white text-pastel-lilac shadow-soft' : 'text-ink-muted hover:text-ink'}`}>
+                                            {lang}
+                                        </button>
+                                    ))}
                                 </div>
-                            </div>
-
-                            <div className="text-center">
-                                <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-wide">
-                                    {t.title}
-                                </h1>
-                                <p className="text-lg text-slate-400 tracking-wider">
-                                    {t.subtitle}
-                                </p>
                             </div>
                         </div>
                     </header>
 
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                        {/* Talent Match Quiz */}
-                        <TalentMatchQuiz
-                            talents={talents}
-                            quizState={quizState}
-                            setQuizState={setQuizState}
-                            onComplete={handleQuizComplete}
-                            onCapacityChange={setPricingFullTime}
-                            language={language}
-                        />
+                    <main className="relative z-10 max-w-6xl mx-auto pt-8 sm:pt-12 pb-16">
+                        <LeadHero language={language} onStartQuiz={openQuiz} quizCompleted={quizCompleted} isQuizOpen={isQuizOpen} />
+                        
+                        <TrustStrip language={language} />
 
-                        {/* Pricing Tier Banner */}
-                        <PricingTierBanner
-                            isFullTime={pricingFullTime}
-                            onToggleCapacity={setPricingFullTime}
-                            language={language}
-                        />
-
-                        {/* Search Bar */}
-                        <div className="mb-6">
-                            <div className="relative">
-                                <svg className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                                <input
-                                    type="text"
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    placeholder={t.searchPlaceholder}
-                                    className="w-full pl-12 pr-4 py-4 bg-white border border-slate-200 rounded-2xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm"
-                                />
-                            </div>
+                        <div className="max-w-3xl mx-auto">
+                            <TalentMatchQuiz talents={talents} quizState={quizState} setQuizState={setQuizState} onComplete={handleQuizComplete} onCapacityChange={setPricingFullTime} language={language} quizRef={quizRef} isQuizOpen={isQuizOpen} onCloseQuiz={() => setIsQuizOpen(false)} />
                         </div>
 
-                        {/* Category Pills */}
-                        <div className="flex flex-wrap gap-3 mb-6">
-                            {CATEGORIES.map(cat => (
-                                <button
-                                    key={cat.id}
-                                    onClick={() => setSelectedCategory(cat.id)}
-                                    className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ease-in-out tracking-widest text-sm uppercase ${
-                                        selectedCategory === cat.id
-                                            ? 'gradient-badge text-white shadow-xl'
-                                            : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 hover:shadow-md'
-                                    }`}
-                                >
-                                    {cat.name}
-                                </button>
-                            ))}
-                        </div>
+                        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <PricingTierBanner isFullTime={pricingFullTime} onToggleCapacity={setPricingFullTime} language={language} expanded={pricingExpanded} onToggleExpanded={() => setPricingExpanded(!pricingExpanded)} />
 
-                        {!loading && !error && (
-                            <div className="mb-6 text-center">
-                                <p className="text-slate-500 tracking-wide">
-                                    <span className="font-bold text-brand-600 text-xl">{filteredTalents.length}</span> {t.resultsFound}
-                                </p>
-                            </div>
-                        )}
-
-                        {loading && (
-                            <div className="text-center py-20">
-                                <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-brand-600 mb-4"></div>
-                                <p className="text-slate-500 text-lg tracking-wide">{t.loading}</p>
-                            </div>
-                        )}
-
-                        {error && (
-                            <div className="max-w-md mx-auto text-center py-20">
-                                <div className="bg-red-50 border border-red-200 rounded-2xl p-6 shadow-xl">
-                                    <svg className="w-12 h-12 text-red-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <h3 className="text-lg font-bold text-red-900 mb-2">{t.error}</h3>
-                                    <p className="text-red-700 mb-4">{error}</p>
-                                    <button
-                                        onClick={fetchTalents}
-                                        className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-xl font-semibold transition-all duration-300"
-                                    >
-                                        {t.retry}
-                                    </button>
+                            <FadeIn delay={200} className="mb-6 sm:mb-8">
+                                <div className={`flex flex-col sm:flex-row gap-4 transition-opacity duration-500 ${!quizCompleted && isQuizOpen ? 'opacity-40 pointer-events-none' : 'opacity-100'}`}>
+                                    <div className="relative flex-grow">
+                                        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                        <input type="text" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder={t.searchPlaceholder}
+                                            className="w-full pl-11 pr-4 py-3 sm:py-3.5 glass-panel rounded-2xl focus:ring-2 focus:ring-pastel-lilac/30 transition-all duration-300 text-sm text-ink placeholder:text-ink-light" />
+                                    </div>
+                                    <div className="flex flex-wrap gap-2 sm:gap-2.5 overflow-x-auto pb-2 sm:pb-0 hide-scrollbar">
+                                        {CATEGORIES.map(cat => (
+                                            <button key={cat.id} onClick={() => setSelectedCategory(cat.id)}
+                                                className={`px-4 py-2 sm:py-3 rounded-xl sm:rounded-2xl text-[11px] sm:text-xs font-medium transition-all duration-300 tracking-luxury whitespace-nowrap border ${
+                                                    selectedCategory === cat.id ? 'bg-pastel-lilac border-pastel-lilac text-white shadow-soft' : 'glass-panel border-white/50 text-ink-muted hover:text-ink hover:bg-white/80'
+                                                }`}>
+                                                {cat.name}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            </FadeIn>
 
-                        {!loading && !error && filteredTalents.length === 0 && (
-                            <div className="text-center py-20">
-                                <svg className="w-24 h-24 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <h3 className="text-2xl font-bold text-slate-deep mb-2">{t.noResults}</h3>
-                                <p className="text-slate-500">{t.tryAdjusting}</p>
-                            </div>
-                        )}
+                            {!loading && !error && filteredTalents.length > 0 && (
+                                <FadeIn delay={100} className="mb-6 px-1">
+                                    <p className="text-ink-muted text-xs sm:text-sm font-medium">
+                                        <span className="text-pastel-lilac text-sm sm:text-base">{filteredTalents.length}</span> {t.resultsFound}
+                                    </p>
+                                </FadeIn>
+                            )}
 
-                        {!loading && !error && filteredTalents.length > 0 && (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {filteredTalents.map((talent, index) => (
-                                    <TalentCard
-                                        key={talent.id}
-                                        talent={talent}
-                                        language={language}
-                                        onRequestInterview={handleRequestInterview}
-                                        isLocked={!quizCompleted && index >= 3}
-                                        index={index}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                            {loading && (
+                                <div className="text-center py-20">
+                                    <div className="w-10 h-10 rounded-xl shimmer-loader mx-auto mb-4" />
+                                    <p className="text-ink-muted text-xs tracking-luxury uppercase">{t.loading}</p>
+                                </div>
+                            )}
 
-                    {showInterviewModal && selectedTalent && (
-                        <div className="fixed inset-0 bg-slate-deep/70 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-                            <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8">
+                            {error && (
+                                <div className="max-w-sm mx-auto text-center py-16">
+                                    <div className="glass-panel rounded-3xl p-6 shadow-soft border border-pastel-blush">
+                                        <p className="text-ink-muted text-sm mb-4">{error}</p>
+                                        <button onClick={fetchTalents} className="bg-pastel-lilac text-white px-6 py-2 rounded-full text-xs font-medium">
+                                            {t.retry}
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+
+                            {!loading && !error && filteredTalents.length === 0 && (
+                                <div className="py-10">
+                                    <ZeroResultsCTA language={language} onRequestCustom={handleCustomRequest} />
+                                </div>
+                            )}
+
+                            {!loading && !error && filteredTalents.length > 0 && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
+                                    {filteredTalents.map((talent, index) => (
+                                        <TalentCard key={talent.id} talent={talent} language={language} onRequestInterview={handleRequestInterview} isLocked={!quizCompleted && index >= (window.innerWidth < 640 ? 2 : 4)} index={index} onUnlockClick={openQuiz} />
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </main>
+
+                    {/* Shared Modal */}
+                    {showModal && (
+                        <div className="fixed inset-0 bg-ink/30 backdrop-blur-sm flex items-center justify-center p-4 z-50" onClick={() => setShowModal(false)}>
+                            <div className="glass-panel rounded-[2rem] shadow-soft-lg max-w-md w-full p-6 sm:p-8 modal-enter border border-white" onClick={(e) => e.stopPropagation()}>
                                 <div className="flex justify-between items-start mb-6">
                                     <div>
-                                        <h3 className="text-2xl font-bold text-slate-deep mb-1 tracking-wide">
-                                            {t.scheduleInterview}
+                                        <h3 className="text-lg sm:text-xl font-semibold text-ink mb-1 tracking-tight">
+                                            {modalMode === 'interview' ? t.scheduleInterview : t.customRequestTitle}
                                         </h3>
-                                        <p className="text-slate-500">
-                                            {selectedTalent.full_name} — {selectedTalent.role_type}
-                                        </p>
+                                        {modalMode === 'interview' && selectedTalent && (
+                                            <p className="text-ink-muted text-xs sm:text-sm">{selectedTalent.full_name} — {selectedTalent.role_type}</p>
+                                        )}
+                                        {modalMode === 'custom' && (
+                                            <p className="text-ink-muted text-xs leading-relaxed max-w-sm">{language==='es'?'Describa el perfil exacto que busca.':'Describe the exact profile you are looking for.'}</p>
+                                        )}
                                     </div>
-                                    <button
-                                        onClick={() => setShowInterviewModal(false)}
-                                        className="text-slate-400 hover:text-slate-600 transition-all duration-300"
-                                    >
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
+                                    <button onClick={() => setShowModal(false)} className="w-8 h-8 rounded-full bg-white/60 hover:bg-white flex items-center justify-center text-ink-muted hover:text-pastel-rose transition-colors shrink-0">
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                                     </button>
                                 </div>
 
-                                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setShowInterviewModal(false); }}>
+                                <form className="space-y-3.5" onSubmit={(e) => { e.preventDefault(); setShowModal(false); alert(language==='es'?'Solicitud enviada':'Request sent'); }}>
+                                    <div><input type="text" required placeholder={language==='es'?'Su Nombre *':'Your Name *'} className="w-full px-4 py-3 bg-white/80 border border-white/50 rounded-xl focus:ring-2 focus:ring-pastel-lilac/30 text-sm" /></div>
+                                    <div><input type="email" required placeholder={language==='es'?'Su Email Laboral *':'Work Email *'} className="w-full px-4 py-3 bg-white/80 border border-white/50 rounded-xl focus:ring-2 focus:ring-pastel-lilac/30 text-sm" /></div>
                                     <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-2 tracking-widest uppercase">
-                                            {t.yourName} *
-                                        </label>
-                                        <input
-                                            type="text"
-                                            required
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="John Doe"
-                                        />
+                                        <textarea rows={modalMode==='custom'?4:3} required={modalMode==='custom'} placeholder={modalMode==='custom' ? (language==='es'?'Detalle habilidades, herramientas, zona horaria... *':'List skills, tools, timezone... *') : (language==='es'?'Mensaje (Opcional)':'Message (Optional)')} className="w-full px-4 py-3 bg-white/80 border border-white/50 rounded-xl focus:ring-2 focus:ring-pastel-lilac/30 text-sm resize-none" />
                                     </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-2 tracking-widest uppercase">
-                                            {t.yourEmail} *
-                                        </label>
-                                        <input
-                                            type="email"
-                                            required
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="john@company.com"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-2 tracking-widest uppercase">
-                                            {t.yourPhone}
-                                        </label>
-                                        <input
-                                            type="tel"
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="+1 (555) 123-4567"
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className="block text-sm font-semibold text-slate-600 mb-2 tracking-widest uppercase">
-                                            {t.message}
-                                        </label>
-                                        <textarea
-                                            rows={4}
-                                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-brand-600 focus:border-transparent transition-all duration-300"
-                                            placeholder="Tell us about your needs and availability..."
-                                        />
-                                    </div>
-
-                                    <div className="flex gap-3 pt-4">
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowInterviewModal(false)}
-                                            className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 px-6 py-3 rounded-xl font-semibold transition-all duration-300"
-                                        >
-                                            {t.close}
-                                        </button>
-                                        <button
-                                            type="submit"
-                                            className="flex-1 bg-accent hover:bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-xl"
-                                        >
-                                            {t.send}
-                                        </button>
+                                    <div className="flex gap-2 pt-3">
+                                        <button type="button" onClick={() => setShowModal(false)} className="flex-1 bg-white border border-white/50 text-ink-muted px-4 py-3 rounded-xl text-xs sm:text-sm font-medium hover:bg-pastel-lavender/30">{t.close}</button>
+                                        <button type="submit" className="flex-[2] btn-premium text-white px-4 py-3 rounded-xl text-xs sm:text-sm font-semibold shadow-soft">{t.send}</button>
                                     </div>
                                 </form>
                             </div>
                         </div>
                     )}
+                    
+                    <style dangerouslySetInnerHTML={{__html: `
+                        .hide-scrollbar::-webkit-scrollbar { display: none; }
+                        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+                        img[onerror] + .fallback-svg { display: none; }
+                        img[onerror]:not([src]), img[onerror][src=""] { display: none; }
+                        img[onerror]:not([src]) + .fallback-svg, img[onerror][src=""] + .fallback-svg { display: block; }
+                    `}} />
                 </div>
             );
         }
 
-        ReactDOM.render(<TalentBench />, document.getElementById('root'));
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<TalentBench />);
     </script>
 </body>
 </html>
