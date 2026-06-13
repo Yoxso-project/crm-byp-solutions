@@ -205,6 +205,20 @@ document.addEventListener('click', function(e) {
     showPrivateAccessModal();
   }
 }, true);
+
+  const quizObserver = new MutationObserver(() => {
+    const quizBtn = Array.from(document.querySelectorAll('button')).find(btn => /Start Match Quiz/i.test(btn.textContent || ''));
+    if (!quizBtn || quizBtn.dataset.quizBound === 'true') return;
+    quizBtn.dataset.quizBound = 'true';
+    quizBtn.addEventListener('click', () => {
+      const quizSection = document.querySelector('.fade-visible');
+      if (quizSection) {
+        quizSection.classList.remove('hidden');
+        quizSection.classList.add('expanded');
+      }
+    });
+  });
+  quizObserver.observe(document.body, { childList: true, subtree: true });
 </script>
 
   </body>
