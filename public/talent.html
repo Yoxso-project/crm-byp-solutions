@@ -207,15 +207,54 @@ document.addEventListener('click', function(e) {
 }, true);
 
   const quizObserver = new MutationObserver(() => {
-    const quizBtn = Array.from(document.querySelectorAll('button')).find(btn => /Start Match Quiz/i.test(btn.textContent || ''));
+    const quizBtn = Array.from(document.querySelectorAll('button')).find(btn => /Start Match Quiz|✨/i.test(btn.textContent || '') || /quiz/i.test(btn.className || ''));
     if (!quizBtn || quizBtn.dataset.quizBound === 'true') return;
     quizBtn.dataset.quizBound = 'true';
-    quizBtn.addEventListener('click', () => {
-      const quizSection = document.querySelector('.fade-visible');
-      if (quizSection) {
-        quizSection.classList.remove('hidden');
-        quizSection.classList.add('expanded');
+    
+    quizBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      let quizSection = document.querySelector('.fade-visible, [class*="quiz"], [class*="Quiz"], [id*="quiz"], [id*="Quiz"]');
+      
+      if (!quizSection) {
+        quizSection = document.createElement('div');
+        quizSection.className = 'quiz-popup-overlay';
+        quizSection.innerHTML = `
+          <div class="quiz-popup-content">
+            <button class="quiz-popup-close">&times;</button>
+            <h2>Match Quiz</h2>
+            <p>Quiz content will appear here. Please check back later.</p>
+          </div>
+        `;
+        document.body.appendChild(quizSection);
       }
+      
+      quizSection.classList.remove('hidden');
+      quizSection.classList.add('active', 'expanded');
+      quizSection.style.display = 'flex';
+      quizSection.style.position = 'fixed';
+      quizSection.style.top = '0';
+      quizSection.style.left = '0';
+      quizSection.style.width = '100%';
+      quizSection.style.height = '100%';
+      quizSection.style.zIndex = '99999';
+      quizSection.style.backgroundColor = 'rgba(0,0,0,0.8)';
+      quizSection.style.justifyContent = 'center';
+      quizSection.style.alignItems = 'center';
+      
+      const closeBtn = quizSection.querySelector('.quiz-popup-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          quizSection.style.display = 'none';
+        });
+      }
+      
+      quizSection.addEventListener('click', (e) => {
+        if (e.target === quizSection) {
+          quizSection.style.display = 'none';
+        }
+      });
     });
   });
   quizObserver.observe(document.body, { childList: true, subtree: true });
